@@ -1,0 +1,92 @@
+---
+title: "微信读书工具箱：安装与使用指南"
+description: "一步步教您如何安装、配置和使用微信读书工具箱的全部功能，包括 Notion 同步、Obsidian 配置等。"
+published: true
+---
+
+本指南将帮助您顺利安装和使用"微信读书工具箱"浏览器插件。
+
+## 安装指南
+
+1.  **下载插件文件**
+    点击 ☞ [下载微信读书工具箱](https://pan.quark.cn/s/2210db173b6a)，选择最新版本（如 `v0.0.7`）的压缩包，例如 `chrome-mv3-weread-toolbox.zip`。下载后，请将其**解压**到一个固定的文件夹。
+
+    ![下载文件](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=ZmM0NGU3Y2QyMDlmNzZjMWMzYzg4YTczMDMyYzI3YzZfRzFyQ1BvN0ZNZ3pxSGFCN1Bic3BpUjNmd2J0NUJIQ3VfVG9rZW46RHdKMWI4OUU2b3VlSkV4YmdxQ2M3UVdIblpmXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+2.  **加载插件至浏览器**
+    - 在 Chrome 或 Edge 浏览器地址栏输入 `chrome://extensions/` 并回车。
+    - 在打开的扩展管理页面中，**激活右上角的"开发者模式"**。
+    - 点击"加载已解压的扩展程序"，在弹出的窗口中选择您在第一步解压的那个文件夹（例如 `chrome-mv3-weread-toolbox`）。
+
+    ![加载插件](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=NmFkMTkzZTM0MjdmNjQ4NzA5YjRjNzZkMmYyNWQ0NmRfUUxyQ2k3bU5zTnlQa0ZENkhxaGNhOWVTRm9HaExMYjZfVG9rZW46Q1NYY2JmdVJSb0xaekl4VUs4VWNBQVBpbm5oXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+3.  **开始使用**
+    安装成功后，打开任意一本[微信读书](https://weread.qq.com/)的书籍，在页面右侧菜单栏的底部，您会看到一个新的插件图标。点击它，即可展开工具箱的各项功能。
+
+    ![功能入口](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=NjczYTMwNWZkODYzNGIwZTNjMDRmZGMwMmEwNTllZjJfNno5emJyUzlUcDFoeXRpckozYTc3b1VVdHBBekNPYVNfVG9rZW46RTVpQWJlaGV2bzRpNEN4MDVyemNYdXc2blJmXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+## Notion 同步教程
+
+如果您希望将笔记同步到 Notion，请按照以下步骤配置。
+
+1.  **获取 Notion Token**
+    - 访问 [Notion 集成页面](https://www.notion.so/my-integrations)。
+    - 点击 "New integration"，输入一个名称（如 "WeRead Toolbox"）并提交。
+    - 在新页面中点击 "Show"，然后复制生成的 "Internal Integration Token"。
+
+    ![获取Token](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTQwYjAxYzYyNTg2MmZhNjI2Y2YxMDA0Y2U4MjM3YWNfWmVDdWNHMzVUN0hoc3F3aVlnYlU3VHZGcHJaTDVHSldfVG9rZW46V21UVmI2TUl3b3l5dXJ4SXZ0ZmNTSWNKbk1iXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+2.  **创建并获取 Database ID**
+    - 复制三此君提供的 [Notion 模板](https://sancijun.notion.site/8a17716b20db4ec1a99c2e03d9c633ee) 到您自己的 Notion 空间。
+    - 复制后，浏览器地址栏中的链接会像这样 `https://www.notion.so/YOUR_WORKSPACE/8a17716b20db4ec1a99c2e03d9c633ee?v=...`。其中 `8a17716b20db4ec1a99c2e03d9c633ee` 就是您的 Database ID。
+
+    ![复制模板](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTQ1OGU3YWM2ZDUwMDU4OWE4ZmMwMjZjNmQ3ZTNjNDhfTUZkUk5LMjFYMHJkamFFcm50M1hxdVhXclpJUVlPaVRfVG9rZW46TUJ0RmJUbHlXb3hwMnR4YVBlOGNLMU5qbnRiXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+3.  **连接 Integration 到 Database**
+    - **【重要】** 在您复制的 Notion Database 页面，点击右上角的 `...` 菜单。
+    - 选择 "Add connections"，然后搜索并选择您在第一步创建的 Integration。授权连接后，插件才能写入数据。
+
+    ![连接Integration](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=YjM3MGQ1NzIwYzEyMmFlNWNkNDNjNGQ5OTQzNDNiMGZfSWJIelRvdVk0dXZ2T3h3dXZCMnNEZnlDS2VaTVlmNnpfVG9rZW46QWl1SmI0V3lGbzdKTjJ4V1loRGNFN2d5bmpjXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+4.  **配置插件**
+    - 在插件的设置页面，填入您获取的 Notion Token 和 Database ID。
+
+    ![插件设置](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=YTM5ZWU3NmE5NGYyOWJjNTgxYWMyZjg3Yjk2ZThlNjJfczVzTkVmRGdXWDNVVU1haW95U05KbjZwZjZLSmI3NGFfVG9rZW46SktxZmJ6aFRab2hTS094M2JjemM4VzQ5bnhoXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+## Obsidian 配置
+
+1.  **导出笔记**：使用插件的"全书标注"功能导出 `.md` 文件，并将其保存到您的 Obsidian 仓库中。
+2.  **使用 Projects 插件**：在 Obsidian 中安装并启用 `Projects` 插件。新建一个项目，数据源选择"标签"，内容填写 `#微信读书笔记`。
+    ![Obsidian Projects](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=OGIxOTk3ZGY1YjM4OTM4YmMwNmQ5YTliMjQ3N2QwMzlfQ2lCc0dMaDlSc2NpZ0cwcFJGek82Zkp5dFZCNUt3bjlfVG9rZW46WEkwcWIwTm4wb2d1YXV4MFRqUWN1NXdyblBjXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+3.  **配置字段**：您可以自定义项目视图，例如将 `封面` 字段设置为图片URL，以便直接显示封面。
+    ![Obsidian 字段配置](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=NWM1ZDk4ZjZlMmZiNzdjNWI0NGVlODZmMGUwMGNhN2VfUVUycXNQOGFCSktBWUlDYnZYZ1dUcjJFUGk2a0lnQ0ZfVG9rZW46V084cGJGNHZqb1VuMzZ4V3VwMWNRN3oybmVjXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+
+## 思维导图功能
+
+1.  **生成与查看**：点击"全书标注"或"热门标注"后，在弹窗的右上角找到并点击"思维导图"按钮即可。
+    ![生成思维导图](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDYyYjZjMmQ3NzQxOTRhMDQ3MTkxM2RiOGFmM2FjM2VfWXJFNlBQS0tzbjQ4bmp4SFJodlVWQVh3WlFCUmlTaW1fVG9rZW46WHlqZWJpbjNib2lIc2F4cG1jV2MzQzE1bmNkXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA)
+2.  **导入 Xmind**：如果需要编辑，可以下载 Markdown 或 Word 格式的文档，然后导入到 Xmind 等思维导图软件中。（**提示**：若 Word 导入失败，可尝试打开文档，随便输入一个空格后保存，再重新导入。）
+
+## 常见问题 (FAQ)
+
+1.  **图片导出失败？**
+    可能由网络波动导致图片未完全加载。请在插件设置中开启"强制图片加载"选项后重试。
+2.  **插件按钮不显示？**
+    请尝试禁用浏览器中其他同类插件，避免冲突。
+3.  **封号风险提示**
+    本插件在开发和测试中未遇到封号情况，但微信读书官方规则可能变动。请您了解相关风险，按需使用。
+
+## 联系作者
+
+使用过程中有任何问题或建议，欢迎通过以下方式联系**三此君**：
+
+| 平台 | 联系方式 |
+| :--- | :--- |
+| **个人微信** | ![个人微信](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=N2U4YTkzM2Y2ZDMzMjRmNzQ5ZGRmYzEwMmRiOGVkNGVfWnVkUG9sUTNZY2JKRU5tS1RoMFpkdkJPZ3VNMjRqaVdfVG9rZW46Rlc4U2JITFhxb0pPVDd4VUFpOGNUZzBCbnBkXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA) |
+| **小红书** | ![小红书](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=NDE0MzM4ZDhmZDFiMzk5Y2U4ODM0ODYyOTgwMDg4Y2FfUUYybnZsRTBjMW1RcnBhY2JxcDY4R0Qza2puUnZvWVRfVG9rZW46UU9LbWJObmJ3b0c3YXF4SDQ5NWNvMkgwbmJjXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA) |
+| **Bilibili** | ![Bilibili](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=MWFkM2Y4NTA5NmI3YmU0MTY3YTQ2NjcwYzE5MjA3NTdfdVFJaWQ3RmZSNEdUcTBJWlNQWjJPRXlVS05PZ2g5cHBfVG9rZW46S3dDTGJicTFtb0ZYRXJ4c3FNOGNuTXVSblNiXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA) |
+| **打赏支持** | ![打赏](https://sancijun.feishu.cn/space/api/box/stream/download/asynccode/?code=NGZiYWM2ZjAxMWI2ODFmNGEyZjQyMWUxYjI1ZDE2NTZfbVFjVnNoeVo4ekNaVmgzdkZTemxwZlhmYUdVVkdrdUZfVG9rZW46T0RBWmJ0d0djb1ZYVGJ4TGdJVGNQWDZMbmxmXzE3NTEwODc0NjQ6MTc1MTA5MTA2NF9WNA) |
+
+## 致谢
+- **[wereader](https://github.com/Higurashi-kagome/wereader)**: 本项目导出标注部分参考了此项目。
+- **[weread_to_notion](https://github.com/malinkang/weread_to_notion)**: 本项目导出到 Notion 功能参考了此项目。 

@@ -110,13 +110,15 @@ export default async function IndexPage() {
             <div key={project._id} className="group">
               <Link href={project.url} target="_blank" rel="noopener noreferrer">
                 <article className="relative flex flex-col space-y-2">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={804}
-                    height={452}
-                    className="rounded-md border bg-muted transition-colors group-hover:opacity-80"
-                  />
+                  <div className="relative h-60 w-full overflow-hidden rounded-md border bg-muted">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-contain p-4 transition-transform duration-300 ease-in-out group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                  </div>
                   <h2 className="text-2xl font-extrabold">{project.title}</h2>
                   <p className="text-muted-foreground">{project.description}</p>
                 </article>

@@ -15,7 +15,7 @@ interface ProjectPageProps {
 }
 
 async function getProjectFromParams(params) {
-  const project = allProjects.find((p) => p.slug === params.slug)
+  const project = allProjects.find((p) => p.slugAsParams === params.slug)
   if (!project) {
     return null
   }
@@ -39,7 +39,7 @@ export async function generateMetadata({
 
 export async function generateStaticParams(): Promise<ProjectPageProps["params"][]> {
   return allProjects.map((project) => ({
-    slug: project.slug as string,
+    slug: project.slugAsParams,
   }))
 }
 
