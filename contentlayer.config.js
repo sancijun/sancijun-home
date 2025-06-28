@@ -91,6 +91,10 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
+    videoUrl: {
+      type: "string",
+      required: false,
+    },
     description: {
       type: "string",
       required: true,

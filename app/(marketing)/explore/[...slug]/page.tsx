@@ -1,17 +1,16 @@
 import { notFound } from "next/navigation"
 import { allPosts } from "contentlayer/generated"
-
-import { Mdx } from "@/components/mdx-components"
-
-import "@/styles/mdx.css"
-import { Metadata } from "next"
+import { type Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 
+import "@/styles/mdx.css"
 import { env } from "@/env.mjs"
 import { absoluteUrl, cn, formatDate } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
+import { DocsPager } from "@/components/pager"
+import { Mdx } from "@/components/mdx-components"
 
 interface PostPageProps {
   params: {
@@ -39,42 +38,13 @@ export async function generateMetadata({
     return {}
   }
 
-  const url = env.NEXT_PUBLIC_APP_URL
-
-  const ogUrl = new URL(`${url}/api/og`)
-  ogUrl.searchParams.set("heading", post.title)
-  ogUrl.searchParams.set("type", "探索文章")
-  ogUrl.searchParams.set("mode", "dark")
-
   return {
     title: post.title,
     description: post.description,
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      url: absoluteUrl(post.slug),
-      images: [
-        {
-          url: ogUrl.toString(),
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-      images: [ogUrl.toString()],
-    },
   }
 }
 
-export async function generateStaticParams(): Promise<
-  PostPageProps["params"][]
-> {
+export async function generateStaticParams(): Promise<PostPageProps["params"][]> {
   return allPosts.map((post) => ({
     slug: post.slugAsParams.split("/"),
   }))
@@ -115,29 +85,58 @@ export default async function PostPage({ params }: PostPageProps) {
           <p className="mt-2 text-md text-muted-foreground">{post.category}</p>
         )}
       </div>
-      {post.image && (
-        <Image
-          src={post.image}
-          alt={post.title}
-          width={720}
-          height={405}
-          className="my-8 rounded-md border bg-muted transition-colors"
-          priority
-        />
+
+      {post.format === "video" && post.videoUrl ? (
+        <div className="my-8">
+          <Link
+            href={post.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block"
+          >
+            <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 75vw"
+                priority
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <Icons.playCircle className="h-20 w-20 text-white/80" />
+              </div>
+            </div>
+          </Link>
+          <div className="mt-6 flex justify-center">
+            <Link
+              href={post.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(buttonVariants({ size: "lg" }))}
+            >
+              <Icons.play className="mr-2 h-5 w-5" />
+              在源平台观看
+            </Link>
+          </div>
+        </div>
+      ) : (
+        post.image && (
+          <Image
+            src={post.image}
+            alt={post.title}
+            width={720}
+            height={405}
+            className="my-8 rounded-md border bg-muted transition-colors"
+            priority
+          />
+        )
       )}
       <div className="prose prose-stone dark:prose-invert mx-auto mt-8 w-full">
         <Mdx code={post.body.code} />
       </div>
       <hr className="mt-12" />
-      <div className="flex justify-center py-6 lg:py-10">
-        <Link
-          href="/explore"
-          className={cn(buttonVariants({ variant: "ghost" }))}
-        >
-          <Icons.chevronLeft className="mr-2 h-4 w-4" />
-          查看所有文章
-        </Link>
-      </div>
+      <DocsPager doc={post} />
     </article>
   )
 }

@@ -16,6 +16,8 @@ import {
   Moon,
   MoreVertical,
   Pizza,
+  Play,
+  PlayCircle,
   Plus,
   Settings,
   SunMedium,
@@ -50,6 +52,8 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  play: Play,
+  playCircle: PlayCircle,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
