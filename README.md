@@ -1,89 +1,109 @@
-# Taxonomy
+# 三此君的数字花园 (sancijun.com)
 
-An open source application built using the new router, server components and everything new in Next.js 13.
+这是"三此君"的个人品牌中心和数字花园的源代码。本项目基于 [Taxonomy](https://github.com/shadcn/taxonomy) 模板进行了深度定制化改造，以完全服务于"三此君"的个人品牌战略。
 
-> **Warning**
-> This app is a work in progress. I'm building this in public. You can follow the progress on Twitter [@shadcn](https://twitter.com/shadcn).
-> See the roadmap below.
+## 品牌核心
 
-## About this project
+本网站旨在承载"三此君"的三大核心支柱：
 
-This project as an experiment to see how a modern app (with features like authentication, subscriptions, API routes, static pages for docs ...etc) would work in Next.js 13 and server components.
+*   **此时 (This Time):** AI 革命的浪潮。分享最前沿的 AI 技术、大模型原理与落地经验。
+*   **此地 (This Place):** 环游中国的旅程。记录作为数字游民的所见、所闻、所思。
+*   **此身 (This Body):** 个体的转变之旅。分享从大厂到独立创造者的经验与感悟。
 
-**This is not a starter template.**
+## 技术栈
 
-A few people have asked me to turn this into a starter. I think we could do that once the new features are out of beta.
+*   **框架**: [Next.js 13](https://nextjs.org/) (App Router)
+*   **内容管理**: [Contentlayer](https://www.contentlayer.dev/)
+*   **数据库**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite)
+*   **UI**: [Tailwind CSS](https://tailwindcss.com/) + [Radix UI](https://www.radix-ui.com/) (由 [shadcn/ui](https://ui.shadcn.com/) 提供)
+*   **认证**: [NextAuth.js](https://next-auth.js.org/)
+*   **部署**: Vercel / Cloudflare Pages
 
-## Note on Performance
+## 项目结构
 
-> **Warning**
-> This app is using the unstable releases for Next.js 13 and React 18. The new router and app dir is still in beta and not production-ready.
-> **Expect some performance hits when testing the dashboard**.
-> If you see something broken, you can ping me [@shadcn](https://twitter.com/shadcn).
+本项目的核心内容和功能围绕以下目录展开：
 
-## Features
+### `app/` - 路由与页面
 
-- New `/app` dir,
-- Routing, Layouts, Nested Layouts and Layout Groups
-- Data Fetching, Caching and Mutation
-- Loading UI
-- Route handlers
-- Metadata files
-- Server and Client Components
-- API Routes and Middlewares
-- Authentication using **NextAuth.js**
-- ORM using **Prisma**
-- Database on **PlanetScale**
-- UI Components built using **Radix UI**
-- Documentation and blog using **MDX** and **Contentlayer**
-- Subscriptions using **Stripe**
-- Styled using **Tailwind CSS**
-- Validations using **Zod**
-- Written in **TypeScript**
+*   `app/(marketing)`: **主站路由组**。包含了网站所有面向公众的核心页面。
+    *   `page.tsx`: **首页**，品牌的动态门户。
+    *   `explore/`: **探索页面**，所有文章、笔记的聚合地，带有分类和格式筛选功能。
+    *   `create/`: **创造页面**，展示所有独立开发的项目。
+    *   `journey/`: **在路上页面**，展示旅行日志的专属展区。
+    *   `about/`: **关于页面**。
+*   `app/(docs)`: **文档路由组**。用于渲染产品使用指南等结构化文档。
+    *   `docs/`: 渲染 `/docs/...` 路径下的所有文档，拥有独立的侧边栏布局。
 
-## Roadmap
+### `content/` - 内容源
 
-- [x] ~Add MDX support for basic pages~
-- [x] ~Build marketing pages~
-- [x] ~Subscriptions using Stripe~
-- [x] ~Responsive styles~
-- [x] ~Add OG image for blog using @vercel/og~
-- [x] Dark mode
+所有网站内容均由本地的 Markdown (`.mdx`) 文件驱动。
 
-## Known Issues
+*   `content/explore/`: 存放所有**文章**和**笔记**。每篇文章的 frontmatter 中需定义 `category` 和 `format`。
+*   `content/create/`: 存放所有**项目**的介绍。可选择性地通过 `featured: true` 在首页推荐，通过 `docs: "/path/to/docs"` 关联文档。
+*   `content/docs/`: 存放所有**产品文档**。
 
-A list of things not working right now:
+### `config/` - 站点配置
 
-1. ~GitHub authentication (use email)~
-2. ~[Prisma: Error: ENOENT: no such file or directory, open '/var/task/.next/server/chunks/schema.prisma'](https://github.com/prisma/prisma/issues/16117)~
-3. ~[Next.js 13: Client side navigation does not update head](https://github.com/vercel/next.js/issues/42414)~
-4. [Cannot use opengraph-image.tsx inside catch-all routes](https://github.com/vercel/next.js/issues/48162)
+*   `config/site.ts`: 定义网站的全局信息，如名称、描述、社交链接。
+*   `config/marketing.ts`: 定义主站导航栏的链接。
+*   `config/docs.ts`: 定义文档区域的侧边栏导航结构。
 
-## Why not tRPC, Turborepo or X?
+## 本地开发
 
-I might add this later. For now, I want to see how far we can get using Next.js only.
+### 1. 环境准备
 
-If you have some suggestions, feel free to create an issue.
+本项目使用 `pnpm` 作为包管理器。请先确保已安装 `pnpm`:
 
-## Running Locally
+```bash
+npm install -g pnpm
+```
 
-1. Install dependencies using pnpm:
+### 2. 安装依赖
 
-```sh
+克隆项目后，在根目录运行：
+
+```bash
 pnpm install
 ```
 
-2. Copy `.env.example` to `.env.local` and update the variables.
+### 3. 配置环境变量
 
-```sh
+复制 `.env.example` 文件为 `.env.local`，并填入必要的环境变量。
+
+```bash
 cp .env.example .env.local
 ```
 
-3. Start the development server:
+至少需要配置以下变量：
 
-```sh
+*   `DATABASE_URL`: 指向本地 SQLite 数据库文件的路径，例如 `file:./prisma/dev.db`。
+*   `NEXTAUTH_URL`: 开发环境下通常为 `http://localhost:3000`。
+*   `NEXTAUTH_SECRET`: 一个用于加密的随机字符串，可以通过 `openssl rand -base64 32` 生成。
+
+### 4. 初始化数据库
+
+初次运行时，需要初始化本地数据库并生成 Prisma 客户端。
+
+```bash
+pnpm prisma migrate dev
+pnpm prisma generate
+```
+
+### 5. 启动开发服务器
+
+```bash
 pnpm dev
 ```
+
+现在，您可以在 `http://localhost:3000` 访问您的网站。
+
+## 内容创作流程
+
+1.  **写文章**: 在 `content/explore/` 目录下创建一个新的 `.mdx` 文件。在 frontmatter 中填写 `title`, `description`, `date`, `category` 等字段。
+2.  **加项目**: 在 `content/create/` 目录下创建一个新的 `.mdx` 文件。填写 `title`, `description`, `date`, `url` 等字段。
+3.  **写文档**: 在 `content/docs/` 目录下创建一个新的子目录和 `.mdx` 文件，然后在 `config/docs.ts` 中配置它的侧边栏导航。
+
+Contentlayer 会在您保存文件时自动重新构建内容，您可以在浏览器中实时看到更改。
 
 ## License
 

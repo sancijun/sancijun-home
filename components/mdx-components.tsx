@@ -5,6 +5,7 @@ import { useMDXComponent } from "next-contentlayer/hooks"
 import { cn } from "@/lib/utils"
 import { Callout } from "@/components/callout"
 import { MdxCard } from "@/components/mdx-card"
+import { MdxImage } from "./mdx-image"
 
 const components = {
   h1: ({ className, ...props }) => (
@@ -96,11 +97,9 @@ const components = {
     alt,
     ...props
   }: React.ImgHTMLAttributes<HTMLImageElement>) => (
-    <Image
+    <MdxImage
       className={cn("rounded-md border", className)}
       alt={alt}
-      width={720}
-      height={405}
       {...props}
     />
   ),
@@ -152,14 +151,7 @@ const components = {
       {...props}
     />
   ),
-  Image: (props) => (
-    <Image
-      alt={props.alt}
-      width={720}
-      height={405}
-      {...props}
-    />
-  ),
+  Image: MdxImage,
   Callout,
   Card: MdxCard,
 }

@@ -16,6 +16,52 @@ const computedFields = {
   },
 }
 
+export const Project = defineDocumentType(() => ({
+  name: "Project",
+  filePathPattern: `create/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    description: {
+      type: "string",
+      required: true,
+    },
+    date: {
+      type: "date",
+      required: true,
+    },
+    url: {
+      type: "string",
+      required: true,
+    },
+    slug: {
+      type: "string",
+      required: false,
+    },
+    docs: {
+      type: "string",
+      required: false,
+    },
+    image: {
+      type: "string",
+      required: true,
+    },
+    published: {
+      type: "boolean",
+      default: true,
+    },
+    featured: {
+      type: "boolean",
+      default: false,
+      required: false,
+    },
+  },
+  computedFields,
+}))
+
 export const Doc = defineDocumentType(() => ({
   name: "Doc",
   filePathPattern: `docs/**/*.mdx`,
@@ -36,37 +82,9 @@ export const Doc = defineDocumentType(() => ({
   computedFields,
 }))
 
-export const Guide = defineDocumentType(() => ({
-  name: "Guide",
-  filePathPattern: `guides/**/*.mdx`,
-  contentType: "mdx",
-  fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
-    date: {
-      type: "date",
-      required: true,
-    },
-    published: {
-      type: "boolean",
-      default: true,
-    },
-    featured: {
-      type: "boolean",
-      default: false,
-    },
-  },
-  computedFields,
-}))
-
 export const Post = defineDocumentType(() => ({
   name: "Post",
-  filePathPattern: `blog/**/*.mdx`,
+  filePathPattern: `explore/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -75,6 +93,7 @@ export const Post = defineDocumentType(() => ({
     },
     description: {
       type: "string",
+      required: true,
     },
     date: {
       type: "date",
@@ -88,54 +107,25 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
-    authors: {
-      // Reference types are not embedded.
-      // Until this is fixed, we can use a simple list.
-      // type: "reference",
-      // of: Author,
+    category: {
+      type: "enum",
+      options: ["AI洞察", "产品构建", "工具笔记", "环华日志"],
+      required: true,
+    },
+    format: {
+      type: "enum",
+      options: ["article", "video"],
+      default: "article",
+    },
+    tags: {
       type: "list",
       of: { type: "string" },
-      required: true,
+      required: false,
     },
-  },
-  computedFields,
-}))
-
-export const Author = defineDocumentType(() => ({
-  name: "Author",
-  filePathPattern: `authors/**/*.mdx`,
-  contentType: "mdx",
-  fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
-    avatar: {
-      type: "string",
-      required: true,
-    },
-    twitter: {
-      type: "string",
-      required: true,
-    },
-  },
-  computedFields,
-}))
-
-export const Page = defineDocumentType(() => ({
-  name: "Page",
-  filePathPattern: `pages/**/*.mdx`,
-  contentType: "mdx",
-  fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
+    location: {
+      type: "list",
+      of: { type: "number" },
+      required: false,
     },
   },
   computedFields,
@@ -143,7 +133,7 @@ export const Page = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Page, Doc, Guide, Post, Author],
+  documentTypes: [Post, Project, Doc],
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
@@ -179,3 +169,4 @@ export default makeSource({
     ],
   },
 })
+
