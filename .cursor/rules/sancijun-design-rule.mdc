@@ -1,0 +1,8 @@
+---
+description: 
+globs: *.tsx
+alwaysApply: false
+---
+本项目基于 shadcn-ui/taxonomy 模板开发，UI/UX 风格要和 shadcn-ui/taxonomy 保持一致。
+添加组件使用 npx shadcn@latest add xxx 或 pnpm dlx shadcn@latest add xxx
+UI/UX 设计风格要统一，参考 [globals.css](mdc:styles/globals.css) [tailwind.config.js](mdc:tailwind.config.js)
