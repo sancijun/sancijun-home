@@ -217,58 +217,130 @@ export const plannedRoute2024: PlannedDestination[] = [
     description: "芜湖"
   },
   {
+    name: "徽州",
+    coordinates: [29.8672, 118.4355],
+    province: "安徽",
+    description: "徽州"
+  },
+  {
     name: "黄山",
-    coordinates: [29.7145, 118.3378],
+    coordinates: [29.7141, 118.3404],
     province: "安徽",
     description: "五岳归来不看山，黄山归来不看岳"
   },
   {
     name: "婺源",
-    coordinates: [29.2464, 117.8613],
+    coordinates: [29.2519, 117.8625],
     province: "江西",
     description: "中国最美乡村"
   },
   {
+    name: "景德镇",
+    coordinates: [29.2690, 117.1834],
+    province: "江西",
+    description: "景德镇"
+  },
+  {
     name: "南昌",
-    coordinates: [28.6820, 115.8581],
+    coordinates: [28.6802, 115.8638],
     province: "江西",
     description: "英雄城，滕王阁"
   },
   {
+    name: "萍乡",
+    coordinates: [27.6227, 113.8538],
+    province: "江西",
+    description: "萍乡"
+  },
+  {
     name: "赣州",
-    coordinates: [25.8452, 114.9335],
+    coordinates: [25.8303, 114.9362],
     province: "江西",
     description: "客家摇篮，红色故都"
   },
   {
     name: "韶关",
-    coordinates: [24.8103, 113.5977],
+    coordinates: [24.8093, 113.5938],
     province: "广东",
     description: "粤北门户，丹霞山"
   },
   {
     name: "湛江",
-    coordinates: [21.2574, 110.3594],
+    coordinates: [21.2686, 110.3603],
     province: "广东",
     description: "南方港城，海鲜之都"
   },
   {
     name: "海口",
-    coordinates: [20.0458, 110.3417],
+    coordinates: [20.0454, 110.2000],
     province: "海南",
     description: "椰城海口，热带风情"
   },
   {
     name: "万宁",
-    coordinates: [18.7962, 110.3893],
+    coordinates: [18.7951, 110.3877],
     province: "海南",
     description: "冲浪胜地，椰林海韵"
   },
   {
     name: "三亚",
-    coordinates: [18.2528, 109.5113],
+    coordinates: [18.2516, 109.5117],
     province: "海南",
     description: "天涯海角，热带天堂"
+  },
+  {
+    name: "乐东",
+    coordinates: [18.5231, 108.7061],
+    province: "海南",
+    description: "乐东"
+  },
+  {
+    name: "东方",
+    coordinates: [19.0964, 108.6537],
+    province: "海南",
+    description: "东方"
+  },
+  {
+    name: "儋州",
+    coordinates: [19.7427, 109.3731],
+    province: "海南",
+    description: "儋州"
+  },
+  {
+    name: "临高",
+    coordinates: [19.9142, 109.6887],
+    province: "海南",
+    description: "临高"
+  },
+  {
+    name: "海口",
+    coordinates: [20.0454, 110.2000],
+    province: "海南",
+    description: "椰城海口，热带风情"
+  },
+  {
+    name: "北海",
+    coordinates: [21.4837, 109.1189],
+    province: "广西",
+    description: "北海"
+  },
+  {
+    name: "南宁",
+    coordinates: [22.8160, 108.3540],
+    province: "广西",
+    description: "南宁"
+  },
+  {
+    name: "百色",
+    coordinates: [23.9011, 106.6168],
+    province: "广西",
+    description: "百色"
+  },
+  {
+    name: "昆明",
+    coordinates: [24.8805, 102.8337],
+    province: "云南",
+    description: "昆明"
   }
 ]
 
