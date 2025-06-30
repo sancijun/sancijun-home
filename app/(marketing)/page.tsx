@@ -5,13 +5,23 @@ import Image from "next/image"
 
 import { siteConfig } from "@/config/site"
 import { cn, formatDate } from "@/lib/utils"
+import { generateGraphData } from "@/lib/graph"
 import { buttonVariants } from "@/components/ui/button"
+import KnowledgeGraph from "@/components/knowledge-graph"
 
 export default async function IndexPage() {
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
-    .slice(0, 2)
+    .slice(0, 8)
+
+  // Data for Knowledge Graph - only use 'explore' posts
+  const explorePosts = allPosts
+    .filter((post) => post.published && post.slug.startsWith("/explore"))
+    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
+
+  const graphData = generateGraphData(explorePosts)
+  const latestPost = explorePosts.length > 0 ? explorePosts[0] : null
 
   const projects = allProjects
     .filter((project) => project.published && project.featured)
@@ -56,43 +66,21 @@ export default async function IndexPage() {
         </div>
       </section>
 
-      <section
-        id="latest-posts"
-        className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24"
-      >
+      <section id="explore-network" className="container space-y-6 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            最新探索
+            探索 · 网络
           </h2>
           <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-            我在 AI 时代的所见、所闻、所思。
+            从 AI 浪潮到环华之旅，我所有的思考、洞察与实验都汇聚于此。点击图谱探索思想的连接，或从右侧查阅我的最新足迹。
           </p>
         </div>
-        <div className="grid gap-10 sm:grid-cols-2">
-          {posts.map((post) => (
-            <article
-              key={post._id}
-              className="group relative flex flex-col space-y-2"
-            >
-              {post.image && (
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  width={804}
-                  height={452}
-                  className="rounded-md border bg-muted transition-colors"
-                />
-              )}
-              <h2 className="text-2xl font-extrabold">{post.title}</h2>
-              <p className="text-muted-foreground">{post.description}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatDate(post.date)}
-              </p>
-              <Link href={post.slug} className="absolute inset-0">
-                <span className="sr-only">View Article</span>
-              </Link>
-            </article>
-          ))}
+
+        <div className="relative mx-auto h-[600px] w-full max-w-6xl overflow-hidden rounded-lg border">
+          <KnowledgeGraph
+            graphData={graphData}
+            latestPostId={latestPost?.slugAsParams}
+          />
         </div>
       </section>
 
