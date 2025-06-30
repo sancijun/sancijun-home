@@ -11,6 +11,13 @@ import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { DocsPager } from "@/components/pager"
 import { Mdx } from "@/components/mdx-components"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 interface PostPageProps {
   params: {
@@ -86,7 +93,35 @@ export default async function PostPage({ params }: PostPageProps) {
         )}
       </div>
 
-      {post.format === "video" && post.videoUrl ? (
+      {post.format === "slides" && post.images && post.images.length > 0 ? (
+        <div className="my-8">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {post.images.map((imageUrl, index) => (
+                <CarouselItem key={index}>
+                  <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+                    <Image
+                      src={imageUrl}
+                      alt={`${post.title} - 幻灯片 ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 75vw"
+                      priority={index === 0}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-4" />
+            <CarouselNext className="right-4" />
+          </Carousel>
+          <div className="mt-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              {post.images.length} 张幻灯片 • 使用左右箭头或滑动浏览
+            </p>
+          </div>
+        </div>
+      ) : post.format === "video" && post.videoUrl ? (
         <div className="my-8">
           <Link
             href={post.videoUrl}

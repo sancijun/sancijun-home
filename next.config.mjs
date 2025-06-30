@@ -13,6 +13,7 @@ const nextConfig = {
       "i0.hdslb.com",
       "i1.hdslb.com",
       "i2.hdslb.com",
+      "cdn.jsdelivr.net",
     ],
   },
   experimental: {

@@ -16,6 +16,56 @@ const computedFields = {
   },
 }
 
+export const Author = defineDocumentType(() => ({
+  name: "Author",
+  filePathPattern: `authors/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+    avatar: {
+      type: "string",
+    },
+    twitter: {
+      type: "string",
+    },
+  },
+  computedFields,
+}))
+
+export const Guide = defineDocumentType(() => ({
+  name: "Guide",
+  filePathPattern: `guides/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+    date: {
+      type: "date",
+      required: true,
+    },
+    published: {
+      type: "boolean",
+      default: true,
+    },
+    featured: {
+      type: "boolean",
+      default: false,
+    },
+  },
+  computedFields,
+}))
+
 export const Project = defineDocumentType(() => ({
   name: "Project",
   filePathPattern: `create/**/*.mdx`,
@@ -64,7 +114,7 @@ export const Project = defineDocumentType(() => ({
 
 export const Doc = defineDocumentType(() => ({
   name: "Doc",
-  filePathPattern: `docs**/*.mdx`,
+  filePathPattern: `docs/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -111,6 +161,11 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
+    images: {
+      type: "list",
+      of: { type: "string" },
+      required: false,
+    },
     category: {
       type: "enum",
       options: ["AI洞察", "产品构建", "工具笔记", "环华日志"],
@@ -118,7 +173,7 @@ export const Post = defineDocumentType(() => ({
     },
     format: {
       type: "enum",
-      options: ["article", "video"],
+      options: ["article", "video", "slides"],
       default: "article",
     },
     tags: {
@@ -137,7 +192,7 @@ export const Post = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Project, Doc],
+  documentTypes: [Post, Project, Doc, Guide, Author],
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [

@@ -1,21 +1,15 @@
-import { ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-
-import { env } from "@/env.mjs"
+import { format } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(input: string | number): string {
-  const date = new Date(input)
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })
+export function formatDate(date: string | Date): string {
+  return format(new Date(date), "yyyy年MM月dd日")
 }
 
 export function absoluteUrl(path: string) {
-  return `${env.NEXT_PUBLIC_APP_URL}${path}`
+  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`
 }
