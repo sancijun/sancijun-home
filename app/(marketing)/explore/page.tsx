@@ -5,12 +5,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { allPosts, Post } from "contentlayer/generated"
 import { compareDesc } from "date-fns"
-import { ChevronDown, ChevronUp, Play } from "lucide-react"
+import { ChevronDown, ChevronUp, Play, Search, Pin, BookOpen, X } from "lucide-react"
 
 import { cn, formatDate } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Carousel,
   CarouselContent,
@@ -64,10 +65,26 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
             </div>
           )}
 
-          {/* 格式标签 - 统一使用主色调 */}
+          {/* 置顶标签 */}
+          {post.pinned && (
+            <div className="absolute right-2 top-2">
+              <Badge
+                variant="default"
+                className="bg-red-500 hover:bg-red-600 text-white border-0"
+              >
+                <Pin className="w-3 h-3 mr-1" />
+                置顶
+              </Badge>
+            </div>
+          )}
+
+          {/* 格式标签 */}
           <Badge
             variant="default"
-            className="absolute left-2 top-2"
+            className={cn(
+              "absolute left-2 top-2",
+              post.pinned ? "top-12" : "top-2"
+            )}
           >
             {post.format === "article" && "文章"}
             {post.format === "video" && "视频"}
@@ -77,19 +94,37 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
       </CardHeader>
 
       <CardContent className="flex-1 p-4">
-        <h3 className="mb-2 line-clamp-2 text-lg font-semibold leading-tight">
-          {post.title}
-        </h3>
-        <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
-          {post.description}
-        </p>
-        <div className="mb-2 flex items-center gap-2">
-          <Badge variant="secondary" className="text-xs">
-            {post.category}
-          </Badge>
-          <span className="text-xs text-muted-foreground">
-            {formatDate(post.date)}
-          </span>
+        <div className="space-y-3">
+          {/* 合集标签 */}
+          {post.series && post.series.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <BookOpen className="w-4 h-4 text-primary shrink-0" />
+              <div className="flex flex-wrap gap-1">
+                {post.series.map((seriesName, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs font-normal">
+                    {seriesName}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <h3 className="line-clamp-2 text-lg font-semibold leading-tight">
+            {post.title}
+          </h3>
+          
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {post.description}
+          </p>
+          
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {post.category}
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              {formatDate(post.date)}
+            </span>
+          </div>
         </div>
       </CardContent>
 
@@ -127,7 +162,7 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
 }
 
 interface TagFilterProps {
-  tags: string[]
+  tags: Array<{ tag: string; count: number }>
   selectedTag: string
   onTagSelect: (tag: string) => void
   maxVisible?: number
@@ -141,7 +176,7 @@ function TagFilter({ tags, selectedTag, onTagSelect, maxVisible = 12 }: TagFilte
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {visibleTags.map((tag) => (
+        {visibleTags.map(({ tag, count }) => (
           <Button
             key={tag}
             variant={selectedTag === tag ? "default" : "outline"}
@@ -150,6 +185,9 @@ function TagFilter({ tags, selectedTag, onTagSelect, maxVisible = 12 }: TagFilte
             className="h-8 text-xs"
           >
             {tag}
+            {tag !== "全部" && (
+              <span className="ml-1 text-xs opacity-70">({count})</span>
+            )}
           </Button>
         ))}
       </div>
@@ -181,12 +219,18 @@ export default function ExplorePage() {
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => {
+      // 置顶文章在前
+      if (a.pinned && !b.pinned) return -1
+      if (!a.pinned && b.pinned) return 1
+      // 按日期排序
       return compareDesc(new Date(a.date), new Date(b.date))
     })
 
   const [selectedCategory, setSelectedCategory] = React.useState("全部")
   const [selectedFormat, setSelectedFormat] = React.useState("全部")
   const [selectedTag, setSelectedTag] = React.useState("全部")
+  const [selectedSeries, setSelectedSeries] = React.useState("全部")
+  const [searchQuery, setSearchQuery] = React.useState("")
 
   const categories = ["全部", "AI洞察", "产品构建", "效率工具", "环国自驾"]
   const formats = ["全部", "article", "video", "slides"]
@@ -197,17 +241,61 @@ export default function ExplorePage() {
     "slides": "幻灯片"
   }
   
-  const allTags = ["全部", ...Array.from(new Set(posts.flatMap((post) => post.tags || [])))]
+  // 计算标签和对应的文章数量，按数量排序
+  const tagCounts = React.useMemo(() => {
+    const counts = new Map<string, number>()
+    posts.forEach((post) => {
+      post.tags?.forEach((tag) => {
+        counts.set(tag, (counts.get(tag) || 0) + 1)
+      })
+    })
+    
+    const sortedTags = Array.from(counts.entries())
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count)
+    
+    return [{ tag: "全部", count: posts.length }, ...sortedTags]
+  }, [posts])
 
-  const filteredPosts = posts.filter((post) => {
-    const categoryMatch =
-      selectedCategory === "全部" || post.category === selectedCategory
-    const formatMatch =
-      selectedFormat === "全部" || post.format === selectedFormat
-    const tagMatch =
-      selectedTag === "全部" || post.tags?.includes(selectedTag)
-    return categoryMatch && formatMatch && tagMatch
-  })
+  // 获取所有合集
+  const series = React.useMemo(() => {
+    const allSeries = Array.from(new Set(
+      posts.flatMap(p => p.series || [])
+    ))
+    return ["全部", ...allSeries.sort()]
+  }, [posts])
+
+  const filteredPosts = React.useMemo(() => {
+    return posts.filter((post) => {
+      const categoryMatch = selectedCategory === "全部" || post.category === selectedCategory
+      const formatMatch = selectedFormat === "全部" || post.format === selectedFormat
+      const tagMatch = selectedTag === "全部" || post.tags?.includes(selectedTag)
+      const seriesMatch = selectedSeries === "全部" || (post.series && post.series.includes(selectedSeries))
+      
+      // 搜索匹配
+      const searchMatch = searchQuery === "" || 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (post.series && post.series.some(seriesName => seriesName.toLowerCase().includes(searchQuery.toLowerCase())))
+      
+      return categoryMatch && formatMatch && tagMatch && seriesMatch && searchMatch
+    })
+  }, [posts, selectedCategory, selectedFormat, selectedTag, selectedSeries, searchQuery])
+
+  // 重置所有筛选条件
+  const resetFilters = () => {
+    setSelectedCategory("全部")
+    setSelectedFormat("全部")
+    setSelectedTag("全部")
+    setSelectedSeries("全部")
+    setSearchQuery("")
+  }
+
+  // 清除搜索
+  const clearSearch = () => {
+    setSearchQuery("")
+  }
 
   return (
     <div className="container py-6 lg:py-10">
@@ -219,6 +307,29 @@ export default function ExplorePage() {
           <p className="text-xl text-muted-foreground">
             一个数字花园。我在 AI 时代的所见、所闻、所思。
           </p>
+        </div>
+        
+        {/* 搜索框 - 移到标题右侧 */}
+        <div className="w-full md:w-auto">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="搜索标题、描述、标签或合集..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 md:w-80"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
+                onClick={clearSearch}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -260,11 +371,32 @@ export default function ExplorePage() {
           </div>
         </div>
 
+        {/* 合集筛选 */}
+        {series.length > 1 && (
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-foreground">合集</h3>
+            <div className="flex flex-wrap gap-2">
+              {series.map((seriesName) => (
+                <Button
+                  key={seriesName}
+                  variant={selectedSeries === seriesName ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedSeries(seriesName)}
+                  className="h-8"
+                >
+                  <BookOpen className="w-3 h-3 mr-1" />
+                  {seriesName}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 标签筛选 */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">标签</h3>
           <TagFilter
-            tags={allTags}
+            tags={tagCounts}
             selectedTag={selectedTag}
             onTagSelect={setSelectedTag}
             maxVisible={12}
@@ -276,30 +408,44 @@ export default function ExplorePage() {
 
       {/* 文章列表 */}
       {filteredPosts?.length ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredPosts.map((post) => (
-            <PostCard
-              key={post._id}
-              post={post}
-              onTagClick={setSelectedTag}
-              selectedTag={selectedTag}
-            />
-          ))}
+        <div className="space-y-6">
+          {/* 统计信息 */}
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>共找到 {filteredPosts.length} 篇内容</span>
+            {(selectedCategory !== "全部" || selectedFormat !== "全部" || selectedTag !== "全部" || selectedSeries !== "全部" || searchQuery) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetFilters}
+                className="h-auto p-1 text-xs"
+              >
+                清除筛选
+              </Button>
+            )}
+          </div>
+          
+          {/* 文章网格 */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredPosts.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                onTagClick={setSelectedTag}
+                selectedTag={selectedTag}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed border-border">
           <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
             <h3 className="mt-4 text-lg font-semibold">没有找到相关内容</h3>
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
-              尝试调整筛选条件，或查看所有内容。
+              尝试调整筛选条件或搜索关键词，或查看所有内容。
             </p>
             <Button
               variant="outline"
-              onClick={() => {
-                setSelectedCategory("全部")
-                setSelectedFormat("全部")
-                setSelectedTag("全部")
-              }}
+              onClick={resetFilters}
             >
               重置筛选
             </Button>

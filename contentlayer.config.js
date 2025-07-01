@@ -186,6 +186,16 @@ export const Post = defineDocumentType(() => ({
       of: { type: "number" },
       required: false,
     },
+    pinned: {
+      type: "boolean",
+      default: false,
+      required: false,
+    },
+    series: {
+      type: "list",
+      of: { type: "string" },
+      required: false,
+    },
   },
   computedFields,
 }))
