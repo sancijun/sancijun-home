@@ -188,7 +188,7 @@ export default function ExplorePage() {
   const [selectedFormat, setSelectedFormat] = React.useState("全部")
   const [selectedTag, setSelectedTag] = React.useState("全部")
 
-  const categories = ["全部", "AI洞察", "产品构建", "工具笔记", "环华日志"]
+  const categories = ["全部", "AI洞察", "产品构建", "效率工具", "环国自驾"]
   const formats = ["全部", "article", "video", "slides"]
   const formatLabels = {
     "全部": "全部",

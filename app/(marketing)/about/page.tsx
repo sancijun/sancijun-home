@@ -51,7 +51,7 @@ export default async function AboutPage() {
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full opacity-0 group-hover:opacity-100 blur transition-all duration-300"></div>
                 <div className="relative px-6 py-3 bg-background border rounded-full hover:border-primary/50 transition-all duration-300 group-hover:scale-105">
                   <span className="font-semibold text-primary">此地</span>
-                  <span className="text-muted-foreground ml-2">环国旅程</span>
+                  <span className="text-muted-foreground ml-2">环国自驾</span>
                 </div>
               </div>
               
@@ -92,7 +92,7 @@ export default async function AboutPage() {
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-6 group-hover:rotate-6 transition-transform duration-300">
                   地
                 </div>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">此地 · 环国旅程</h3>
+                <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">此地 · 环国自驾</h3>
                 <p className="text-muted-foreground leading-relaxed">
                   驾车穿越中华大地的壮美山河，在路上思考人生与技术，探索数字游民的生活方式，让代码与自然和谐共存。
                 </p>
@@ -322,7 +322,7 @@ export default async function AboutPage() {
               { icon: '🧠', title: 'AI技术原理与实践', desc: '大模型原理、微调技术、AI工程化实践', gradient: 'from-blue-500 to-cyan-500' },
               { icon: '🛠️', title: 'AI效率工具分享', desc: '编程工具、工作流优化、生产力提升', gradient: 'from-green-500 to-emerald-500' },
               { icon: '📱', title: '独立开发经验', desc: '产品构建、用户反馈、变现思考', gradient: 'from-purple-500 to-violet-500' },
-              { icon: '🌍', title: '环国旅行见闻', desc: '数字游民生活、远程工作、地域文化', gradient: 'from-orange-500 to-red-500' },
+              { icon: '🌍', title: '环国自驾见闻', desc: '数字游民生活、远程工作、地域文化', gradient: 'from-orange-500 to-red-500' },
               { icon: '💡', title: '创业思考', desc: 'AI硬件创业、儿童教育、商业模式', gradient: 'from-pink-500 to-rose-500' },
               { icon: '🎯', title: '职业转型', desc: '从大厂到独立、自由职业的经验分享', gradient: 'from-indigo-500 to-purple-500' }
             ].map((item, index) => (

@@ -33,7 +33,7 @@ export default function JourneyClientPage({ posts }: { posts: Post[] }) {
           在路上
         </h1>
         <p className="text-xl text-muted-foreground">
-          我的环华旅行日志。用脚步丈量世界，用代码记录思考。
+          我的环国自驾环国自驾。用脚步丈量世界，用代码记录思考。
         </p>
       </div>
       
@@ -116,7 +116,7 @@ export default function JourneyClientPage({ posts }: { posts: Post[] }) {
             ) : (
               <div className="space-y-4">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-900 mb-2">2024年环华计划路线</h3>
+                  <h3 className="font-semibold text-blue-900 mb-2">2025年 环国自驾计划路线</h3>
                   <p className="text-sm text-blue-700">
                     从深圳出发，途经26个城市，最终到达三亚。总行程预计覆盖中国南方主要省份。
                   </p>

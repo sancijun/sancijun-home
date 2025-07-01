@@ -33,7 +33,7 @@ export default async function IndexPage() {
     .slice(0, 3)
 
   const journeyPost = allPosts
-    .filter((post) => post.published && post.category === "环华日志")
+    .filter((post) => post.published && post.category === "环国自驾")
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
     .slice(0, 1)[0]
 
@@ -74,7 +74,7 @@ export default async function IndexPage() {
               
               <p className="text-xl sm:text-2xl lg:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 <span className="text-primary font-semibold">此时</span> 探索AI前沿 · 
-                <span className="text-green-600 font-semibold mx-2">此地</span> 环游中华 · 
+                <span className="text-green-600 font-semibold mx-2">此地</span> 环国自驾 · 
                 <span className="text-orange-600 font-semibold">此身</span> 独立创造
               </p>
             </div>
@@ -159,8 +159,8 @@ export default async function IndexPage() {
               {[
                 { color: "bg-blue-500", label: "AI洞察" },
                 { color: "bg-green-500", label: "产品构建" },
-                { color: "bg-orange-500", label: "工具笔记" },
-                { color: "bg-purple-500", label: "环华日志" },
+                { color: "bg-orange-500", label: "效率工具" },
+                { color: "bg-purple-500", label: "环国自驾" },
               ].map((item, index) => (
                 <Badge key={index} variant="secondary" className="bg-card/90 backdrop-blur-sm border-border/20">
                   <div className={`w-2 h-2 ${item.color} rounded-full mr-2`} />
@@ -338,7 +338,7 @@ export default async function IndexPage() {
         </div>
       </section>
 
-      {/* 环华之旅 Section - 全新设计 */}
+      {/* 环国自驾 Section - 全新设计 */}
       {journeyPost && (
         <section className="py-20 lg:py-32 bg-gradient-to-b from-background to-accent/5">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -368,7 +368,7 @@ export default async function IndexPage() {
                       一场正在进行的
                       <br />
                       <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                        环华之旅
+                        环国自驾之旅
                       </span>
                     </h2>
                     
@@ -408,8 +408,8 @@ export default async function IndexPage() {
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 rounded-full" />
                       </div>
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>🚗 广州出发</span>
-                        <span>🏁 环游全国</span>
+                        <span>🚗 深圳出发</span>
+                        <span>🏁 环国自驾</span>
                       </div>
                     </div>
                   </div>

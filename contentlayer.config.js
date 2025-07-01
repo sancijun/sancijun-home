@@ -168,7 +168,7 @@ export const Post = defineDocumentType(() => ({
     },
     category: {
       type: "enum",
-      options: ["AI洞察", "产品构建", "工具笔记", "环华日志"],
+      options: ["AI洞察", "产品构建", "效率工具", "环国自驾"],
       required: true,
     },
     format: {
