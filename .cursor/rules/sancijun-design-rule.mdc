@@ -1,6 +1,6 @@
 ---
 description: 
-globs: *.tsx
+globs: 
 alwaysApply: false
 ---
 本项目基于 shadcn-ui/taxonomy 模板开发，UI/UX 风格要和 shadcn-ui/taxonomy 保持一致。
