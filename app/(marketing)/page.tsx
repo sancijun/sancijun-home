@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect } from "react"
 import Link from "next/link"
 import { allPosts, allProjects } from "contentlayer/generated"
 import { compareDesc } from "date-fns"
@@ -12,8 +15,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress"
 import KnowledgeGraph from "@/components/knowledge-graph"
 import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap, Target, TrendingUp, Star, Globe, FileText, Rocket, Clock } from "lucide-react"
+import HeroBackground from "@/components/hero-background"
 
-export default async function IndexPage() {
+export default function IndexPage() {
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.add("snap-y", "snap-mandatory")
+    return () => {
+      root.classList.remove("snap-y", "snap-mandatory")
+    }
+  }, [])
+
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
@@ -25,7 +37,8 @@ export default async function IndexPage() {
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
 
   const graphData = generateGraphData(explorePosts)
-  const latestPost = explorePosts.length > 0 ? explorePosts[0] : null
+  const latestPosts = explorePosts.slice(0, 3)
+  const latestPost = latestPosts.length > 0 ? latestPosts[0] : null
 
   const projects = allProjects
     .filter((project) => project.published && project.featured)
@@ -47,104 +60,94 @@ export default async function IndexPage() {
 
   return (
     <>
-      {/* Hero Section - 全新设计 */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/98 to-accent/5">
-        {/* 背景装饰 - 优化版 */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
-          <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-primary/5 rounded-full blur-3xl animate-pulse delay-500" />
-          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-accent/8 rounded-full blur-2xl animate-pulse delay-2000" />
-        </div>
+      {/* Hero Section */}
+      <section className="relative w-full overflow-hidden min-h-screen flex items-center justify-center snap-start">
+        <HeroBackground />
+        <div className="container relative z-10 mx-auto max-w-5xl px-4">
+          <div className="text-center space-y-10">
+            <Badge
+              variant="outline"
+              className="text-sm font-medium px-4 py-2 border-border/30 bg-background/50 backdrop-blur-sm animate-fadeIn"
+              style={{ animationDelay: "0ms" }}
+            >
+              在路上 · 进行时
+            </Badge>
 
-        <div className="container relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-8">
-            {/* 状态指示器 */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-border/30 text-accent-foreground">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              <span className="text-sm font-medium">正在路上 · 实时更新中</span>
-            </div>
-
-            {/* 主标题 */}
-            <div className="space-y-6">
-              <h1 className="font-heading text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight">
-                <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
-                  三此君
-                </span>
+            <div
+              className="animate-fadeIn"
+              style={{ animationDelay: "200ms" }}
+            >
+              <h1 className="font-heading text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight">
+                三此君
               </h1>
-              
-              <p className="text-xl sm:text-2xl lg:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              <p className="mt-6 text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
                 AI、代码与山河：一个独立开发者的环国实战。
               </p>
-              <p className="text-md sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                “此时”投身AI浪潮，“此地”扎根真实大地，“此身”成为完整创造者。
+              <p className="mt-4 text-base sm:text-lg text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed">
+                此时、此地、此身，向着数字世界与真实大地，发起一场热烈的环国实战，在路上探索与创造。
               </p>
             </div>
 
-            {/* 实时数据仪表板 */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto">
-              {[
-                { label: "原创文章", value: stats.articles, icon: FileText },
-                { label: "开源项目", value: stats.projects, icon: Rocket },
-                { label: "足迹城市", value: stats.cities, icon: Globe },
-                { label: "旅行天数", value: stats.daysTraveling, icon: Clock },
-              ].map((stat, index) => (
-                <div key={index} className="group">
-                  <div className="bg-card/60 backdrop-blur-sm border border-border/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:bg-card/80 hover:border-primary/30 hover:shadow-lg hover:scale-105">
-                    <stat.icon className="w-8 h-8 mb-2 text-primary" />
-                    <div className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA按钮组 */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
+            <div
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeIn"
+              style={{ animationDelay: "400ms" }}
+            >
               <Link
                 href="/explore"
-                className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "h-14 px-8 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 group"
-                )}
+                className={cn(buttonVariants({ size: "lg" }), "h-12 px-8 text-base")}
               >
-                <Zap className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
-                探索思想宇宙
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                进入数字花园
               </Link>
-              
               <Link
                 href="/create"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "h-14 px-8 text-lg font-semibold border-2 hover:bg-accent/50 transition-all duration-300"
+                  "h-12 px-8 text-base bg-background/50 backdrop-blur-sm"
                 )}
               >
-                <Code className="w-5 h-5 mr-2" />
-                查看创造作品
+                见证创造作品
               </Link>
             </div>
-          </div>
-        </div>
-
-        {/* 向下滚动指示器 */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-muted-foreground/50 rounded-full mt-2 animate-pulse" />
+            
+            <div
+              className="max-w-3xl mx-auto pt-10 animate-fadeIn"
+              style={{ animationDelay: "600ms" }}
+            >
+              <div className="p-4 bg-background/40 backdrop-blur-md rounded-2xl border border-border/30">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                  {[
+                    { label: "原创文章", value: stats.articles, icon: FileText },
+                    { label: "创造作品", value: stats.projects, icon: Rocket },
+                    { label: "足迹城市", value: stats.cities, icon: Globe },
+                    { label: "在路天数", value: stats.daysTraveling, icon: Clock },
+                  ].map((stat) => (
+                    <div key={stat.label}>
+                      <p className="text-2xl sm:text-3xl font-bold text-foreground">
+                        {stat.value}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 知识图谱 Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-b from-background to-accent/5">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-6 mb-16">
+      {/* Knowledge Graph Section */}
+      <section className="h-screen bg-gradient-to-b from-background to-accent/5 flex flex-col justify-center snap-start py-12 lg:py-16">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center h-full max-h-full">
+          <div className="text-center space-y-6 mb-8">
             <Badge variant="outline" className="px-4 py-2 text-sm">
               <Cpu className="w-4 h-4 mr-2" />
               知识图谱
             </Badge>
             
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-              思想的<span className="text-primary">连接网络</span>
+              探索·数字花园
             </h2>
             
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -154,7 +157,7 @@ export default async function IndexPage() {
             </p>
           </div>
 
-          <div className="relative h-[500px] lg:h-[600px] rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 to-accent/3 overflow-hidden shadow-xl">
+          <div className="relative rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 to-accent/3 overflow-hidden shadow-xl w-full flex-1 min-h-0">
             {/* 图例 */}
             <div className="absolute top-6 left-6 z-10 flex flex-wrap gap-3">
               {[
@@ -170,29 +173,28 @@ export default async function IndexPage() {
             </div>
 
             {/* 最新文章卡片 */}
-            {latestPost && (
+            {latestPosts.length > 0 && (
               <div className="absolute top-6 right-6 z-10 w-72">
-                <Card className="bg-card/95 backdrop-blur-sm border-border/30 shadow-lg">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        最新探索
-                      </CardTitle>
-                      <Badge variant="outline" className="text-xs">
-                        {latestPost.category}
-                      </Badge>
-                    </div>
+                <Card className="bg-card/95 backdrop-blur-sm border-border/30 shadow-lg animate-fadeIn">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2 font-medium text-muted-foreground">
+                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                      最新探索
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <h3 className="font-semibold text-sm leading-tight mb-2">{latestPost.title}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{latestPost.description}</p>
-                    <Link 
-                      href={latestPost.slug}
-                      className="text-xs text-primary hover:underline font-medium inline-flex items-center gap-1"
-                    >
-                      立即阅读 <ArrowRight className="w-3 h-3" />
-                    </Link>
+                    <div className="space-y-2">
+                      {latestPosts.map((post) => (
+                        <Link
+                          key={post.slug}
+                          href={post.slug}
+                          className="block text-sm font-medium text-foreground/80 hover:text-primary transition-colors truncate"
+                          title={post.title}
+                        >
+                          {post.title}
+                        </Link>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -203,24 +205,11 @@ export default async function IndexPage() {
               latestPostId={latestPost?.slugAsParams}
             />
           </div>
-
-          <div className="text-center mt-12">
-            <Link
-              href="/explore"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "h-12 px-8 border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
-              )}
-            >
-              浏览全部内容
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* 精选创造 Section - 3个产品 */}
-      <section className="py-20 lg:py-32">
+      <section className="py-20 lg:py-32 min-h-screen flex flex-col items-center justify-center snap-start">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-6 mb-16">
             <Badge variant="outline" className="px-4 py-2 text-sm">
@@ -243,14 +232,15 @@ export default async function IndexPage() {
             {projects.map((project, index) => (
               <Card key={project._id} className="group relative overflow-hidden border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 bg-gradient-to-br from-card to-card/95 flex flex-col h-full">
                 {/* 产品图片区域 */}
-                <div className="relative h-48 bg-gradient-to-br from-accent/15 to-accent/5 overflow-hidden">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-contain p-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                  />
+                <div className="relative h-48 bg-gradient-to-br from-accent/15 to-accent/5 overflow-hidden flex items-center justify-center">
+                  <div className="relative w-32 h-32 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all duration-500"
+                    />
+                  </div>
                   {/* 排名标识 */}
                   <div className="absolute top-4 left-4">
                     <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-sm">
@@ -340,7 +330,7 @@ export default async function IndexPage() {
 
       {/* 环国自驾 Section - 全新设计 */}
       {journeyPost && (
-        <section className="py-20 lg:py-32 bg-gradient-to-b from-background to-accent/5">
+        <section className="py-20 lg:py-32 bg-gradient-to-b from-background to-accent/5 min-h-screen flex items-center justify-center snap-start">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-card to-accent/3 shadow-xl">
               {/* 背景图片 */}
@@ -446,110 +436,31 @@ export default async function IndexPage() {
       )}
 
       {/* 订阅 Section - 全新设计 */}
-      <section className="py-20 lg:py-32">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative max-w-7xl mx-auto">
-            <Card className="relative overflow-hidden border border-border/20 bg-gradient-to-br from-card via-card/95 to-accent/3 shadow-xl">
-              {/* 背景装饰 - 优化版 */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-primary/8 rounded-full blur-2xl" />
-                <div className="absolute -top-16 -right-16 w-32 h-32 bg-accent/15 rounded-full blur-2xl" />
-              </div>
-
-              <CardContent className="relative p-12 lg:p-20 text-center space-y-8">
-                {/* 标识 */}
-                <Badge variant="outline" className="px-4 py-2 text-sm bg-card/80 backdrop-blur-sm">
-                  <Coffee className="w-4 h-4 mr-2" />
-                  加入数字游民社区
-                </Badge>
-
-                {/* 主标题 */}
-                <div className="space-y-4">
-                  <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    订阅我的
-                    <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                      数字花园
-                    </span>
-                  </h2>
-                  
-                  <p className="text-lg sm:text-xl text-muted-foreground max-w-5xl mx-auto leading-relaxed">
-                    加入我的旅程，获取关于AI、创造与生活的独家思考。
-                    <br />
-                    <span className="text-foreground font-semibold">每周精选，价值满满，绝不垃圾信息</span>
-                  </p>
-                </div>
-
-                {/* 价值主张 */}
-                <div className="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                  {[
-                    {
-                      icon: <Cpu className="w-8 h-8 text-primary" />,
-                      title: "AI前沿洞察",
-                      desc: "第一时间分享AI技术趋势与实践经验"
-                    },
-                    {
-                      icon: <Code className="w-8 h-8 text-primary" />,
-                      title: "独立开发经验",
-                      desc: "从0到1的产品开发全流程分享"
-                    },
-                    {
-                      icon: <Globe className="w-8 h-8 text-primary" />,
-                      title: "数字游民生活",
-                      desc: "在路上的工作与生活平衡之道"
-                    },
-                  ].map((item, index) => (
-                    <div key={index} className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 space-y-3 hover:bg-card/80 transition-colors group">
-                      <div className="mx-auto w-fit p-3 bg-accent/20 rounded-xl group-hover:bg-accent/30 transition-colors">
-                        {item.icon}
-                      </div>
-                      <h3 className="font-semibold">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 订阅表单 */}
-                <div className="max-w-lg mx-auto space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="email"
-                      placeholder="输入您的邮箱地址"
-                      className="flex-1 h-12 px-4 rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-                    />
-                    <button
-                      type="submit"
-                      className={cn(
-                        buttonVariants({ size: "lg" }),
-                        "h-12 px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 whitespace-nowrap shadow-lg hover:shadow-xl transition-all"
-                      )}
-                    >
-                      立即订阅
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      ✅ 免费订阅
-                    </span>
-                    <span className="flex items-center gap-1">
-                      ✅ 随时取消
-                    </span>
-                    <span className="flex items-center gap-1">
-                      ✅ 无垃圾邮件
-                    </span>
-                  </div>
-                </div>
-
-                {/* 社会证明 */}
-                <div className="pt-8 border-t border-border/20">
-                  <p className="text-sm text-muted-foreground">
-                    已有 <span className="text-lg font-bold text-primary">1,200+</span> 位朋友加入
-                    <br />
-                    <span className="text-xs">包括来自字节跳动、腾讯、阿里巴巴的工程师和独立开发者</span>
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+      <section className="py-20 lg:py-32 bg-accent/20 border-t border-border/20 min-h-screen flex items-center justify-center snap-start">
+        <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="space-y-6">
+            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
+              加入我的旅程
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              订阅我的邮件列表，获取关于AI、独立开发和数字游民生活的最新思考和独家内容。不错过任何一次思想的碰撞。
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="输入你的邮箱..."
+                className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+              />
+              <button
+                type="submit"
+                className={cn(buttonVariants({ size: "lg" }), "h-12 px-8")}
+              >
+                订阅更新
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              我尊重你的隐私。绝不发送垃圾邮件。
+            </p>
           </div>
         </div>
       </section>

@@ -6,6 +6,11 @@ import dynamic from "next/dynamic";
 import { type GraphNode as Node } from "@/lib/graph";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import * as d3 from 'd3-force';
+import Link from "next/link";
+import { ArrowRight, Focus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Dynamically import the graph component to avoid SSR issues and improve performance
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -93,6 +98,10 @@ const KnowledgeGraph = ({ graphData, latestPostId }: KnowledgeGraphProps) => {
     setHighlightNodes(new Set(highlightNodes));
   };
   
+  const handleCenterView = useCallback(() => {
+    fgRef.current?.zoomToFit(400, 60); // 400ms duration, 60px padding
+  }, []);
+  
   const paintNode = useCallback(
     (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
       const isHighlighted = highlightNodes.has(node);
@@ -130,20 +139,55 @@ const KnowledgeGraph = ({ graphData, latestPostId }: KnowledgeGraphProps) => {
   );
 
   return (
-    <div className="w-full h-full bg-background overflow-hidden">
-      <ForceGraph2D
-        ref={fgRef}
-        graphData={graphData}
-        nodeCanvasObject={paintNode}
-        linkColor={(link) => (highlightLinks.has(link) ? 'rgba(249, 115, 22, 0.6)' : 'rgba(113, 113, 122, 0.15)')}
-        linkWidth={(link) => (highlightLinks.has(link) ? 1.5 : 0.5)}
-        onEngineStop={handleEngineStop}
-        onNodeClick={handleNodeClick}
-        onNodeHover={handleNodeHover}
-        cooldownTicks={100}
-        warmupTicks={400} // Increased warmup ticks for better initial layout
-      />
-    </div>
+    <TooltipProvider>
+      <div className="w-full h-full bg-background overflow-hidden relative">
+        <ForceGraph2D
+          ref={fgRef}
+          graphData={graphData}
+          nodeCanvasObject={paintNode}
+          linkColor={(link) => (highlightLinks.has(link) ? 'rgba(249, 115, 22, 0.6)' : 'rgba(113, 113, 122, 0.15)')}
+          linkWidth={(link) => (highlightLinks.has(link) ? 1.5 : 0.5)}
+          onEngineStop={handleEngineStop}
+          onNodeClick={handleNodeClick}
+          onNodeHover={handleNodeHover}
+          cooldownTicks={100}
+          warmupTicks={400} // Increased warmup ticks for better initial layout
+        />
+        <div className="absolute bottom-6 left-6 z-10">
+          <Link
+            href="/explore"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "bg-background/60 backdrop-blur-sm border-border/30 hover:bg-accent/80 transition-all group animate-fadeIn"
+            )}
+            style={{ animationDelay: "800ms" }}
+          >
+            浏览全部内容
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+        <div className="absolute bottom-6 right-6 z-10">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleCenterView}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  "bg-background/60 backdrop-blur-sm border-border/30 hover:bg-accent/80 transition-all animate-fadeIn"
+                )}
+                style={{ animationDelay: "900ms" }}
+                aria-label="Center graph"
+              >
+                <Focus className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>聚焦全景</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
+    </TooltipProvider>
   );
 };
 
