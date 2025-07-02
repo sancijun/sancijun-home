@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { allPosts, Post } from "contentlayer/generated"
 import { compareDesc } from "date-fns"
+import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, ChevronUp, Play, Search, Pin, BookOpen, X } from "lucide-react"
 
 import { cn, formatDate } from "@/lib/utils"
@@ -22,7 +23,7 @@ interface PostCardProps {
 
 function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
   return (
-    <Card className="group relative flex h-full flex-col overflow-hidden transition-all duration-200 hover:shadow-lg">
+    <Card className="group relative flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <CardHeader className="p-0">
         <div className="relative aspect-[16/9] overflow-hidden">
           <Image
@@ -169,20 +170,31 @@ function TagFilter({ tags, selectedTag, onTagSelect, maxVisible = 12 }: TagFilte
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {visibleTags.map(({ tag, count }) => (
-          <Button
-            key={tag}
-            variant={selectedTag === tag ? "default" : "outline"}
-            size="sm"
-            onClick={() => onTagSelect(tag)}
-            className="h-8 text-xs"
-          >
-            {tag}
-            {tag !== "全部" && (
-              <span className="ml-1 text-xs opacity-70">({count})</span>
-            )}
-          </Button>
-        ))}
+        <AnimatePresence>
+          {visibleTags.map(({ tag, count }) => (
+            <motion.div
+              key={tag}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                key={tag}
+                variant={selectedTag === tag ? "default" : "outline"}
+                size="sm"
+                onClick={() => onTagSelect(tag)}
+                className="h-8 text-xs"
+              >
+                {tag}
+                {tag !== "全部" && (
+                  <span className="ml-1 text-xs opacity-70">({count})</span>
+                )}
+              </Button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
       {hasMore && (
         <Button
@@ -387,51 +399,89 @@ export default function ExplorePage() {
       <hr className="my-8 border-border" />
 
       {/* 文章列表 */}
-      {filteredPosts?.length ? (
-        <div className="space-y-6">
-          {/* 统计信息 */}
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>共找到 {filteredPosts.length} 篇内容</span>
-            {(selectedCategory !== "全部" || selectedTag !== "全部" || selectedSeries !== "全部" || searchQuery) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={resetFilters}
-                className="h-auto p-1 text-xs"
-              >
-                清除筛选
-              </Button>
-            )}
-          </div>
-          
-          {/* 文章网格 */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredPosts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                onTagClick={setSelectedTag}
-                selectedTag={selectedTag}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed border-border">
-          <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-            <h3 className="mt-4 text-lg font-semibold">没有找到相关内容</h3>
-            <p className="mb-4 mt-2 text-sm text-muted-foreground">
-              尝试调整筛选条件或搜索关键词，或查看所有内容。
-            </p>
-            <Button
-              variant="outline"
-              onClick={resetFilters}
+      <AnimatePresence mode="wait">
+        {filteredPosts?.length ? (
+          <motion.div key="posts" className="space-y-6">
+            {/* 统计信息 */}
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>共找到 {filteredPosts.length} 篇内容</span>
+              {(selectedCategory !== "全部" || selectedTag !== "全部" || selectedSeries !== "全部" || searchQuery) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="h-auto p-1 text-xs"
+                >
+                  清除筛选
+                </Button>
+              )}
+            </div>
+            
+            {/* 文章网格 */}
+            <motion.div 
+              key={filteredPosts.map(p => p._id).join("-")}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    delayChildren: 0.1,
+                    staggerChildren: 0.08,
+                  },
+                },
+              }}
             >
-              重置筛选
-            </Button>
-          </div>
-        </div>
-      )}
+              {filteredPosts.map((post) => (
+                <motion.div
+                  key={post._id}
+                  variants={{
+                    hidden: { y: 20, opacity: 0 },
+                    visible: {
+                      y: 0,
+                      opacity: 1,
+                      transition: {
+                        duration: 0.5,
+                        ease: [0.4, 0.0, 0.2, 1], // a smooth bezier curve
+                      },
+                    },
+                  }}
+                >
+                  <PostCard
+                    post={post}
+                    onTagClick={setSelectedTag}
+                    selectedTag={selectedTag}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="no-results"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed border-border"
+          >
+            <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+              <h3 className="mt-4 text-lg font-semibold">没有找到相关内容</h3>
+              <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                尝试调整筛选条件或搜索关键词，或查看所有内容。
+              </p>
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+              >
+                重置筛选
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
