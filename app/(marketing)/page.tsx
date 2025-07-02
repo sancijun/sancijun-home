@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import KnowledgeGraph from "@/components/knowledge-graph"
-import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap, Target, TrendingUp, Star, Globe } from "lucide-react"
+import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap, Target, TrendingUp, Star, Globe, FileText, Rocket, Clock } from "lucide-react"
 
 export default async function IndexPage() {
   const posts = allPosts
@@ -48,7 +48,7 @@ export default async function IndexPage() {
   return (
     <>
       {/* Hero Section - 全新设计 */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/98 to-accent/3">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background/98 to-accent/5">
         {/* 背景装饰 - 优化版 */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -59,37 +59,38 @@ export default async function IndexPage() {
         <div className="container relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-8">
             {/* 状态指示器 */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-border/30 text-accent-foreground">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
               <span className="text-sm font-medium">正在路上 · 实时更新中</span>
             </div>
 
             {/* 主标题 */}
             <div className="space-y-6">
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight">
+              <h1 className="font-heading text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight">
                 <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
                   三此君
                 </span>
               </h1>
               
               <p className="text-xl sm:text-2xl lg:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                <span className="text-primary font-semibold">此时</span> 探索AI前沿 · 
-                <span className="text-green-600 font-semibold mx-2">此地</span> 环国自驾 · 
-                <span className="text-orange-600 font-semibold">此身</span> 独立创造
+                AI、代码与山河：一个独立开发者的环国实战。
+              </p>
+              <p className="text-md sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+                “此时”投身AI浪潮，“此地”扎根真实大地，“此身”成为完整创造者。
               </p>
             </div>
 
             {/* 实时数据仪表板 */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto">
               {[
-                { label: "原创文章", value: stats.articles, icon: "📝" },
-                { label: "开源项目", value: stats.projects, icon: "🚀" },
-                { label: "足迹城市", value: stats.cities, icon: "🌍" },
-                { label: "旅行天数", value: stats.daysTraveling, icon: "⏰" },
+                { label: "原创文章", value: stats.articles, icon: FileText },
+                { label: "开源项目", value: stats.projects, icon: Rocket },
+                { label: "足迹城市", value: stats.cities, icon: Globe },
+                { label: "旅行天数", value: stats.daysTraveling, icon: Clock },
               ].map((stat, index) => (
                 <div key={index} className="group">
                   <div className="bg-card/60 backdrop-blur-sm border border-border/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:bg-card/80 hover:border-primary/30 hover:shadow-lg hover:scale-105">
-                    <div className="text-2xl mb-2">{stat.icon}</div>
+                    <stat.icon className="w-8 h-8 mb-2 text-primary" />
                     <div className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
                     <div className="text-sm text-muted-foreground">{stat.label}</div>
                   </div>
@@ -147,9 +148,9 @@ export default async function IndexPage() {
             </h2>
             
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              每一篇文章都是思维的节点，每一个项目都是创意的火花。
+              每一份内容，都是技术实践、在地体验与个人思考的三位一体。
               <br />
-              在这里，AI洞察与旅行见闻交织，代码与哲思碰撞。
+              在这里，代码与山河交织，AI与哲思碰撞。
             </p>
           </div>
 
@@ -157,13 +158,12 @@ export default async function IndexPage() {
             {/* 图例 */}
             <div className="absolute top-6 left-6 z-10 flex flex-wrap gap-3">
               {[
-                { color: "bg-blue-500", label: "AI洞察" },
-                { color: "bg-green-500", label: "产品构建" },
-                { color: "bg-orange-500", label: "效率工具" },
-                { color: "bg-purple-500", label: "环国自驾" },
+                { label: "AI洞察" },
+                { label: "产品构建" },
+                { label: "效率工具" },
+                { label: "环国自驾" },
               ].map((item, index) => (
                 <Badge key={index} variant="secondary" className="bg-card/90 backdrop-blur-sm border-border/20">
-                  <div className={`w-2 h-2 ${item.color} rounded-full mr-2`} />
                   {item.label}
                 </Badge>
               ))}
@@ -233,9 +233,9 @@ export default async function IndexPage() {
             </h2>
             
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              从0到1的创造过程，每个产品都解决真实用户的实际问题。
+              从0到1的创造，每个产品都是我的数字名片，
               <br />
-              累计服务<span className="text-primary font-semibold">10万+</span>用户，获得广泛好评。
+              旨在解决一个真实世界的问题。
             </p>
           </div>
 
@@ -259,7 +259,7 @@ export default async function IndexPage() {
                   </div>
                   {/* 热门标识 */}
                   <div className="absolute top-4 right-4">
-                    <div className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm">
+                    <div className="bg-primary/80 text-primary-foreground px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm">
                       <TrendingUp className="w-3 h-3" />
                       热门
                     </div>
@@ -365,15 +365,15 @@ export default async function IndexPage() {
                   {/* 主标题 */}
                   <div className="space-y-4">
                     <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                      一场正在进行的
+                      代码之外
                       <br />
                       <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                        环国自驾之旅
+                        是真实的山河大地
                       </span>
                     </h2>
                     
                     <p className="text-xl sm:text-2xl text-muted-foreground">
-                      {journeyPost.title}
+                      一场正在进行的环国自驾，是我的灵感来源，也是我的移动实验室。
                     </p>
                   </div>
 
@@ -381,13 +381,13 @@ export default async function IndexPage() {
                   <div className="bg-card/70 backdrop-blur-sm rounded-2xl p-8 space-y-6 border border-border/20">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                       {[
-                        { label: "已走过", value: "12", unit: "城市", color: "text-blue-600" },
-                        { label: "总里程", value: "8.5K", unit: "公里", color: "text-green-600" },
-                        { label: "在路上", value: stats.daysTraveling, unit: "天", color: "text-orange-600" },
-                        { label: "目标", value: "34", unit: "城市", color: "text-purple-600" },
+                        { label: "已走过", value: "12", unit: "城市" },
+                        { label: "总里程", value: "8.5K", unit: "公里" },
+                        { label: "在路上", value: stats.daysTraveling, unit: "天" },
+                        { label: "目标", value: "34", unit: "城市" },
                       ].map((stat, index) => (
                         <div key={index} className="text-center">
-                          <div className={`text-2xl sm:text-3xl font-bold ${stat.color}`}>
+                          <div className={`text-2xl sm:text-3xl font-bold text-primary`}>
                             {stat.value}
                           </div>
                           <div className="text-sm text-muted-foreground">
@@ -473,7 +473,7 @@ export default async function IndexPage() {
                   </h2>
                   
                   <p className="text-lg sm:text-xl text-muted-foreground max-w-5xl mx-auto leading-relaxed">
-                    获取AI前沿洞察、独立开发经验和数字游民生活的独家内容
+                    加入我的旅程，获取关于AI、创造与生活的独家思考。
                     <br />
                     <span className="text-foreground font-semibold">每周精选，价值满满，绝不垃圾信息</span>
                   </p>
@@ -483,17 +483,17 @@ export default async function IndexPage() {
                 <div className="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
                   {[
                     {
-                      icon: <Cpu className="w-8 h-8 text-blue-600" />,
+                      icon: <Cpu className="w-8 h-8 text-primary" />,
                       title: "AI前沿洞察",
                       desc: "第一时间分享AI技术趋势与实践经验"
                     },
                     {
-                      icon: <Code className="w-8 h-8 text-green-600" />,
+                      icon: <Code className="w-8 h-8 text-primary" />,
                       title: "独立开发经验",
                       desc: "从0到1的产品开发全流程分享"
                     },
                     {
-                      icon: <Globe className="w-8 h-8 text-purple-600" />,
+                      icon: <Globe className="w-8 h-8 text-primary" />,
                       title: "数字游民生活",
                       desc: "在路上的工作与生活平衡之道"
                     },

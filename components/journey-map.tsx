@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge"
 
 interface JourneyMapProps {
   posts: Post[]
-  hoveredPostId: string | null
 }
 
 // 根据缩放级别创建不同大小的标记点
@@ -87,7 +86,7 @@ function MapEventHandler({ onZoomChange }: { onZoomChange: (zoom: number) => voi
   return null
 }
 
-export default function JourneyMap({ posts, hoveredPostId }: JourneyMapProps) {
+export default function JourneyMap({ posts }: JourneyMapProps) {
   const defaultPosition: LatLngExpression = [30.0, 110.0]
   const [showPlannedRoute, setShowPlannedRoute] = useState(true)
   const [currentZoom, setCurrentZoom] = useState(5)
@@ -173,14 +172,12 @@ export default function JourneyMap({ posts, hoveredPostId }: JourneyMapProps) {
           if (!post.location || post.location.length !== 2) return null
 
           const position: LatLngExpression = [post.location[0], post.location[1]]
-          const isHovered = post._id === hoveredPostId
 
           return (
             <Marker
               key={post._id}
               position={position}
-              icon={createCustomIcon('#10b981', isHovered, currentZoom)}
-              zIndexOffset={isHovered ? 1000 : 0}
+              icon={createCustomIcon('#10b981', false, currentZoom)}
             >
               {shouldShowPopups && (
                 <Popup className="custom-popup" closeButton={false} maxWidth={400} minWidth={300}>

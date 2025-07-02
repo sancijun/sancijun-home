@@ -72,6 +72,7 @@
     "d3-force": "^3.0.0",
     "date-fns": "^2.29.3",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.22.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lucide-react": "^0.92.0",
