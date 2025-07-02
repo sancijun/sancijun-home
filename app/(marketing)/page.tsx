@@ -18,14 +18,6 @@ import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap
 import HeroBackground from "@/components/hero-background"
 
 export default function IndexPage() {
-  useEffect(() => {
-    const root = document.documentElement
-    root.classList.add("snap-y", "snap-mandatory")
-    return () => {
-      root.classList.remove("snap-y", "snap-mandatory")
-    }
-  }, [])
-
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
@@ -59,7 +51,7 @@ export default function IndexPage() {
   }
 
   return (
-    <>
+    <div className="h-[calc(100vh-80px)] overflow-y-auto snap-y snap-mandatory">
       {/* Hero Section */}
       <section className="relative w-full overflow-hidden min-h-screen flex items-center justify-center snap-start">
         <HeroBackground />
@@ -464,6 +456,6 @@ export default function IndexPage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   )
 }
