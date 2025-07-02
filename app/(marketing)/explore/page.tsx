@@ -220,24 +220,22 @@ export default function ExplorePage() {
     })
 
   const [selectedCategory, setSelectedCategory] = React.useState("全部")
-  const [selectedFormat, setSelectedFormat] = React.useState("全部")
   const [selectedTag, setSelectedTag] = React.useState("全部")
   const [selectedSeries, setSelectedSeries] = React.useState("全部")
   const [searchQuery, setSearchQuery] = React.useState("")
-
+  
   const categories = ["全部", "AI洞察", "产品构建", "效率工具", "环国自驾"]
-  const formats = ["全部", "article", "video", "slides"]
-  const formatLabels = {
-    "全部": "全部",
-    "article": "文章",
-    "video": "视频",
-    "slides": "幻灯片"
-  }
   
   // 计算标签和对应的文章数量，按数量排序
   const tagCounts = React.useMemo(() => {
+    const postsFilteredByCategoryAndSeries = posts.filter(post => {
+        const categoryMatch = selectedCategory === "全部" || post.category === selectedCategory;
+        const seriesMatch = selectedSeries === "全部" || (post.series && post.series.includes(selectedSeries));
+        return categoryMatch && seriesMatch;
+    });
+
     const counts = new Map<string, number>()
-    posts.forEach((post) => {
+    postsFilteredByCategoryAndSeries.forEach((post) => {
       post.tags?.forEach((tag) => {
         counts.set(tag, (counts.get(tag) || 0) + 1)
       })
@@ -247,8 +245,16 @@ export default function ExplorePage() {
       .map(([tag, count]) => ({ tag, count }))
       .sort((a, b) => b.count - a.count)
     
-    return [{ tag: "全部", count: posts.length }, ...sortedTags]
-  }, [posts])
+    return [{ tag: "全部", count: postsFilteredByCategoryAndSeries.length }, ...sortedTags]
+  }, [posts, selectedCategory, selectedSeries])
+
+  // 当筛选条件变化时，检查所选标签是否仍然有效
+  React.useEffect(() => {
+    const availableTags = new Set(tagCounts.map(t => t.tag));
+    if (!availableTags.has(selectedTag)) {
+      setSelectedTag("全部");
+    }
+  }, [tagCounts, selectedTag, setSelectedTag]);
 
   // 获取所有合集
   const series = React.useMemo(() => {
@@ -261,7 +267,6 @@ export default function ExplorePage() {
   const filteredPosts = React.useMemo(() => {
     return posts.filter((post) => {
       const categoryMatch = selectedCategory === "全部" || post.category === selectedCategory
-      const formatMatch = selectedFormat === "全部" || post.format === selectedFormat
       const tagMatch = selectedTag === "全部" || post.tags?.includes(selectedTag)
       const seriesMatch = selectedSeries === "全部" || (post.series && post.series.includes(selectedSeries))
       
@@ -272,14 +277,13 @@ export default function ExplorePage() {
         post.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (post.series && post.series.some(seriesName => seriesName.toLowerCase().includes(searchQuery.toLowerCase())))
       
-      return categoryMatch && formatMatch && tagMatch && seriesMatch && searchMatch
+      return categoryMatch && tagMatch && seriesMatch && searchMatch
     })
-  }, [posts, selectedCategory, selectedFormat, selectedTag, selectedSeries, searchQuery])
+  }, [posts, selectedCategory, selectedTag, selectedSeries, searchQuery])
 
   // 重置所有筛选条件
   const resetFilters = () => {
     setSelectedCategory("全部")
-    setSelectedFormat("全部")
     setSelectedTag("全部")
     setSelectedSeries("全部")
     setSearchQuery("")
@@ -297,7 +301,7 @@ export default function ExplorePage() {
           <h1 className="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
             探索
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg text-muted-foreground">
           在这里，代码与山河交织，AI与哲思碰撞。
           <br/>
           每一篇文章，都是一次技术实践、在地体验与个人思考的融合。
@@ -331,8 +335,8 @@ export default function ExplorePage() {
       {/* 筛选器 */}
       <div className="my-8 space-y-6">
         {/* 分类筛选 */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-foreground">分类</h3>
+        <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
+          <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">分类</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <Button
@@ -348,28 +352,10 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* 格式筛选 */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-foreground">格式</h3>
-          <div className="flex flex-wrap gap-2">
-            {formats.map((format) => (
-              <Button
-                key={format}
-                variant={selectedFormat === format ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedFormat(format)}
-                className="h-8"
-              >
-                {formatLabels[format] || format}
-              </Button>
-            ))}
-          </div>
-        </div>
-
         {/* 合集筛选 */}
         {series.length > 1 && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-foreground">合集</h3>
+          <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
+            <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">合集</h3>
             <div className="flex flex-wrap gap-2">
               {series.map((seriesName) => (
                 <Button
@@ -379,7 +365,6 @@ export default function ExplorePage() {
                   onClick={() => setSelectedSeries(seriesName)}
                   className="h-8"
                 >
-                  <BookOpen className="w-3 h-3 mr-1" />
                   {seriesName}
                 </Button>
               ))}
@@ -388,8 +373,8 @@ export default function ExplorePage() {
         )}
 
         {/* 标签筛选 */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-foreground">标签</h3>
+        <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
+          <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">标签</h3>
           <TagFilter
             tags={tagCounts}
             selectedTag={selectedTag}
@@ -407,7 +392,7 @@ export default function ExplorePage() {
           {/* 统计信息 */}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>共找到 {filteredPosts.length} 篇内容</span>
-            {(selectedCategory !== "全部" || selectedFormat !== "全部" || selectedTag !== "全部" || selectedSeries !== "全部" || searchQuery) && (
+            {(selectedCategory !== "全部" || selectedTag !== "全部" || selectedSeries !== "全部" || searchQuery) && (
               <Button
                 variant="ghost"
                 size="sm"
