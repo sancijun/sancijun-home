@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css"
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
 import "leaflet-defaulticon-compatibility"
 
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents, GeoJSON } from "react-leaflet"
 import { Post } from "contentlayer/generated"
 import Link from "next/link"
 import { LatLngExpression, Icon, DivIcon } from "leaflet"
@@ -13,63 +13,53 @@ import { useState, useEffect } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import React from "react"
 
 interface JourneyMapProps {
   posts: Post[]
+  activePostId?: string | null
+  onPostHover: (postId: string | null) => void
 }
 
 // 根据缩放级别创建不同大小的标记点
-const createCustomIcon = (color: string, isActive: boolean = false, zoomLevel: number = 5) => {
+const createCustomIcon = (
+  color: string,
+  isActive: boolean = false,
+  zoomLevel: number = 5
+) => {
   // 根据缩放级别调整标记点大小和样式
-  let size, opacity, showIcon, fontSize
-  
+  let size, showIcon
+
   if (zoomLevel <= 4) {
-    // 极小缩放：只显示小点
     size = 8
-    opacity = 0.8
     showIcon = false
-    fontSize = 0
   } else if (zoomLevel <= 6) {
-    // 小缩放：显示小标记
     size = isActive ? 18 : 14
-    opacity = isActive ? 1 : 0.9
     showIcon = false
-    fontSize = 8
   } else {
-    // 正常缩放：显示完整标记
     size = isActive ? 32 : 28
-    opacity = isActive ? 1 : 0.9
     showIcon = true
-    fontSize = 12
   }
-  
+
   return new DivIcon({
     html: `
       <div style="
         width: ${size}px;
         height: ${size}px;
-        background: linear-gradient(135deg, ${color}, ${color}dd);
-        border: ${zoomLevel <= 4 ? '1px' : '3px'} solid white;
+        background-color: ${color};
+        border: 2px solid hsl(var(--background));
         border-radius: 50%;
-        box-shadow: ${zoomLevel <= 4 ? '0 1px 3px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.3), 0 0 0 2px ' + color + '33'};
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: ${fontSize}px;
-        opacity: ${opacity};
-        transform: ${isActive ? 'scale(1.1)' : 'scale(1)'};
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transform: ${isActive ? "scale(1.2)" : "scale(1)"};
         transition: all 0.3s ease;
-        cursor: ${zoomLevel <= 4 ? 'default' : 'pointer'};
+        cursor: pointer;
       ">
-        ${showIcon ? (color.includes('green') ? '✓' : '📍') : ''}
       </div>
     `,
-    className: 'custom-marker',
+    className: "custom-marker",
     iconSize: [size, size],
-    iconAnchor: [size/2, size/2],
-    popupAnchor: [0, -size/2]
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2],
   })
 }
 
@@ -86,15 +76,46 @@ function MapEventHandler({ onZoomChange }: { onZoomChange: (zoom: number) => voi
   return null
 }
 
-export default function JourneyMap({ posts }: JourneyMapProps) {
+export default function JourneyMap({ posts, activePostId, onPostHover }: JourneyMapProps) {
   const defaultPosition: LatLngExpression = [30.0, 110.0]
   const [showPlannedRoute, setShowPlannedRoute] = useState(true)
   const [currentZoom, setCurrentZoom] = useState(5)
+  const mapRef = React.useRef<any>(null)
+  const [chinaGeoJson, setChinaGeoJson] = useState<any>(null)
+
+  useEffect(() => {
+    // 获取中国边界的 GeoJSON 数据
+    fetch("https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setChinaGeoJson(data)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (!activePostId || !mapRef.current) return
+
+    const post = posts.find((p) => p._id === activePostId)
+    if (post?.location) {
+      mapRef.current.flyTo(post.location as LatLngExpression, Math.max(mapRef.current.getZoom(), 8), {
+        animate: true,
+        duration: 1.5,
+      })
+    }
+  }, [activePostId, posts])
 
   // 将计划路线转换为折线坐标
   const routeCoordinates: LatLngExpression[] = journeyConfig.plannedRoute2024.map(
-    destination => destination.coordinates as LatLngExpression
+    (destination) => destination.coordinates as LatLngExpression
   )
+
+  const chinaBorderStyle = {
+    color: "hsl(var(--muted-foreground))",
+    weight: 1,
+    opacity: 0.5,
+    fillColor: "hsl(var(--muted-foreground))",
+    fillOpacity: 0.05,
+  }
 
   // 根据缩放级别决定是否显示标记点
   const shouldShowMarkers = currentZoom > 3
@@ -152,73 +173,66 @@ export default function JourneyMap({ posts }: JourneyMapProps) {
       </Card>
 
       <MapContainer
+        ref={mapRef}
         center={defaultPosition}
         zoom={5}
         scrollWheelZoom={true}
-        className="h-full w-full rounded-2xl"
+        className="h-full w-full rounded-none md:rounded-2xl"
         zoomControl={false}
       >
         {/* 地图事件监听 */}
         <MapEventHandler onZoomChange={setCurrentZoom} />
-        
-        {/* 使用中文地图 */}
+
+        {/* 使用 MapBox 的极简风格地图 */}
         <TileLayer
-          url="https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
-          attribution='&copy; <a href="https://www.amap.com/">高德地图</a>'
+          url="https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"
+          attribution='&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
         />
-        
+
+        {/* 渲染中国边境高亮 */}
+        {chinaGeoJson && (
+          <GeoJSON data={chinaGeoJson} style={chinaBorderStyle} />
+        )}
+
         {/* 已访问的地点标记 - 根据缩放级别显示 */}
-        {shouldShowMarkers && posts.map((post) => {
-          if (!post.location || post.location.length !== 2) return null
+        {shouldShowMarkers &&
+          posts.map((post) => {
+            if (!post.location || post.location.length !== 2) return null
 
-          const position: LatLngExpression = [post.location[0], post.location[1]]
+            const position: LatLngExpression = [post.location[0], post.location[1]]
 
-          return (
-            <Marker
-              key={post._id}
-              position={position}
-              icon={createCustomIcon('#10b981', false, currentZoom)}
-            >
-              {shouldShowPopups && (
-                <Popup className="custom-popup" closeButton={false} maxWidth={400} minWidth={300}>
-                  <div className="space-y-4 p-3">
-                    <div className="border-b border-border pb-3">
-                      <Link 
-                        href={post.slug} 
-                        className="font-semibold hover:underline text-green-600 hover:text-green-700 transition-colors flex items-center gap-2 text-lg"
+            return (
+              <Marker
+                key={post._id}
+                position={position}
+                icon={createCustomIcon(
+                  "hsl(var(--primary))",
+                  activePostId === post._id,
+                  currentZoom
+                )}
+                eventHandlers={{
+                  mouseover: () => onPostHover(post._id),
+                  mouseout: () => onPostHover(null),
+                }}
+              >
+                {shouldShowPopups && (
+                  <Popup className="custom-popup" closeButton={false}>
+                    <div className="space-y-2 p-1">
+                      <Link
+                        href={post.slug}
+                        className="font-semibold hover:underline text-primary flex items-center gap-2"
                       >
-                        <span className="text-xl">📍</span>
                         {post.title}
                       </Link>
-                    </div>
-                    {post.description && (
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {post.description}
-                      </p>
-                    )}
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {post.tags.slice(0, 4).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                        已访问
-                      </Badge>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(post.date).toLocaleDateString('zh-CN')}
+                        {new Date(post.date).toLocaleDateString("zh-CN")}
                       </span>
                     </div>
-                  </div>
-                </Popup>
-              )}
-            </Marker>
-          )
-        })}
+                  </Popup>
+                )}
+              </Marker>
+            )
+          })}
 
         {/* 计划路线和标记 */}
         {showPlannedRoute && (
@@ -228,54 +242,42 @@ export default function JourneyMap({ posts }: JourneyMapProps) {
               positions={routeCoordinates}
               pathOptions={{
                 color: "hsl(var(--primary))",
-                weight: Math.max(2, Math.min(5, currentZoom - 1)), // 根据缩放级别调整线条粗细
-                opacity: 0.8,
-                dashArray: currentZoom <= 4 ? "20, 15" : "15, 10", // 根据缩放级别调整虚线间距
+                weight: Math.max(2, Math.min(5, currentZoom - 2)), // 根据缩放级别调整线条粗细
+                opacity: 0.9,
                 lineCap: "round",
                 lineJoin: "round"
               }}
             />
 
             {/* 计划目的地标记 */}
-            {shouldShowMarkers && journeyConfig.plannedRoute2024.map((destination, index) => (
-              <Marker
-                key={`planned-${destination.name}`}
-                position={destination.coordinates as LatLngExpression}
-                icon={createCustomIcon('#3b82f6', false, currentZoom)}
-              >
-                {shouldShowPopups && (
-                  <Popup className="custom-popup" closeButton={false} maxWidth={400} minWidth={300}>
-                    <div className="space-y-4 p-3">
-                      <div className="border-b border-border pb-3">
-                        <h3 className="font-semibold text-blue-600 flex items-center gap-2 text-lg">
-                          <span className="text-xl">🗺️</span>
+            {shouldShowMarkers &&
+              journeyConfig.plannedRoute2024.map((destination, index) => (
+                <Marker
+                  key={`planned-${destination.name}`}
+                  position={destination.coordinates as LatLngExpression}
+                  icon={createCustomIcon(
+                    "hsl(var(--muted-foreground))",
+                    false,
+                    currentZoom
+                  )}
+                >
+                  {shouldShowPopups && (
+                    <Popup className="custom-popup" closeButton={false}>
+                      <div className="space-y-2 p-1">
+                        <h3 className="font-semibold text-muted-foreground">
                           {destination.name}
                         </h3>
-                      </div>
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
-                          <span className="font-medium text-base">{destination.province}</span>
-                        </p>
-                        {destination.description && (
-                          <p className="text-sm text-foreground leading-relaxed">{destination.description}</p>
-                        )}
-                        <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
-                          坐标: {destination.coordinates[0].toFixed(4)}, {destination.coordinates[1].toFixed(4)}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between pt-2 border-t border-border">
-                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                          计划目的地
+                        <Badge
+                          variant="secondary"
+                          className="font-normal"
+                        >
+                          计划中
                         </Badge>
-                        <span className="text-xs text-muted-foreground font-medium">
-                          第 {index + 1} 站
-                        </span>
                       </div>
-                    </div>
-                  </Popup>
-                )}
-              </Marker>
-            ))}
+                    </Popup>
+                  )}
+                </Marker>
+              ))}
           </>
         )}
       </MapContainer>
