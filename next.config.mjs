@@ -9,7 +9,7 @@ const nextConfig = {
     domains: [
       "avatars.githubusercontent.com",
       "sancijun.feishu.cn",
-      "sns-webpic-qc.xhscdn.com",
+      "sns-na-i11.xhscdn.com",
       "i0.hdslb.com",
       "i1.hdslb.com",
       "i2.hdslb.com",
