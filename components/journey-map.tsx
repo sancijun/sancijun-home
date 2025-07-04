@@ -183,10 +183,11 @@ export default function JourneyMap({ posts, activePostId, onPostHover }: Journey
         {/* 地图事件监听 */}
         <MapEventHandler onZoomChange={setCurrentZoom} />
 
-        {/* 使用 MapBox 的极简风格地图 */}
+        {/* 使用高德地图浅色主题，确保中文显示，并控制显示的要素 */}
         <TileLayer
-          url="https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"
-          attribution='&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
+          url="https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
+          attribution='&copy; <a href="https://www.amap.com/">高德地图</a>'
+          maxZoom={18}
         />
 
         {/* 渲染中国边境高亮 */}
@@ -284,6 +285,14 @@ export default function JourneyMap({ posts, activePostId, onPostHover }: Journey
 
       {/* 自定义样式 */}
       <style jsx global>{`
+        .leaflet-tile-container {
+          filter: grayscale(100%) !important;
+        }
+        
+        .leaflet-container {
+          background: hsl(var(--background)) !important;
+        }
+        
         .leaflet-popup-content-wrapper {
           background: hsl(var(--background));
           border: 1px solid hsl(var(--border));
@@ -306,7 +315,6 @@ export default function JourneyMap({ posts, activePostId, onPostHover }: Journey
         
         .leaflet-container {
           font-family: inherit;
-          background: hsl(var(--muted) / 0.3);
         }
         
         .custom-marker:hover div {
