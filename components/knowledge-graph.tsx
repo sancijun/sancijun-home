@@ -63,10 +63,45 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
   }, []);
 
   const handleCenterView = useCallback(() => {
-    if (!svgRef.current || !zoomRef.current) return;
+    if (!svgRef.current || !zoomRef.current || !nodes || nodes.length === 0) return;
+
     const svg = d3.select(svgRef.current);
-    svg.transition().duration(750).call(zoomRef.current.transform, d3.zoomIdentity);
-  }, []);
+    const parent = svg.node()?.parentElement;
+    if (!parent) return;
+
+    const width = parent.clientWidth;
+    const height = parent.clientHeight;
+
+    const xExtent = d3.extent(nodes, d => d.x);
+    const yExtent = d3.extent(nodes, d => d.y);
+
+    if (xExtent[0] === undefined || yExtent[0] === undefined || xExtent[1] === undefined || yExtent[1] === undefined) {
+      svg.transition().duration(750).call(zoomRef.current.transform, d3.zoomIdentity);
+      return;
+    }
+
+    const boundsWidth = xExtent[1] - xExtent[0];
+    const boundsHeight = yExtent[1] - yExtent[0];
+    const midX = (xExtent[0] + xExtent[1]) / 2;
+    const midY = (yExtent[0] + yExtent[1]) / 2;
+
+    if (boundsWidth === 0 && boundsHeight === 0) {
+      const transform = d3.zoomIdentity.translate(-midX, -midY).scale(1);
+      svg.transition().duration(750).call(zoomRef.current.transform, transform);
+      return;
+    }
+
+    const scaleX = boundsWidth > 0 ? width / boundsWidth : Infinity;
+    const scaleY = boundsHeight > 0 ? height / boundsHeight : Infinity;
+    const scale = Math.min(scaleX, scaleY) * 0.85; // add 15% padding
+
+    const translateX = -midX * scale;
+    const translateY = -midY * scale;
+
+    const transform = d3.zoomIdentity.translate(translateX, translateY).scale(scale);
+
+    svg.transition().duration(750).call(zoomRef.current.transform, transform);
+  }, [nodes]);
 
   useEffect(() => {
     if (!svgRef.current || !nodes || !links) return;
