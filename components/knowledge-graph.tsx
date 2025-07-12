@@ -1,158 +1,194 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import * as d3 from "d3";
 import { type GraphNode as Node } from "@/lib/graph";
-import { ForceGraphMethods } from "react-force-graph-2d";
-import * as d3 from 'd3-force';
 import Link from "next/link";
 import { ArrowRight, Focus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
-// Dynamically import the graph component to avoid SSR issues and improve performance
-const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
-  ssr: false,
-  loading: () => <p className="text-center text-muted-foreground pt-8">内容网络生成中，请稍候...</p>,
-});
+interface GraphNode extends Node, d3.SimulationNodeDatum {}
+
+interface GraphLink extends d3.SimulationLinkDatum<GraphNode> {
+  source: string | GraphNode;
+  target: string | GraphNode;
+}
 
 interface KnowledgeGraphProps {
   graphData: {
-    nodes: Node[];
-    links: any[];
+    nodes: GraphNode[];
+    links: GraphLink[];
   };
-  latestPostId?: string | null;
+  className?: string;
 }
 
-const KnowledgeGraph = ({ graphData, latestPostId }: KnowledgeGraphProps) => {
-  const router = useRouter();
-  const fgRef = useRef<ForceGraphMethods>();
-  const [initialAnimationDone, setInitialAnimationDone] = useState(false);
+const drag = (simulation: d3.Simulation<GraphNode, undefined>) => {
+  function dragstarted(event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>, d: GraphNode) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+  function dragged(event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>, d: GraphNode) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+  function dragended(event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>, d: GraphNode) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+  return d3.drag<SVGGElement, GraphNode>()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
+};
 
-  const [highlightNodes, setHighlightNodes] = useState(new Set());
-  const [highlightLinks, setHighlightLinks] = useState(new Set());
+const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
+  const router = useRouter();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const { nodes, links } = graphData;
+
+  const [colors, setColors] = useState({ primary: '#000', foreground: '#666' });
 
   useEffect(() => {
-    if (fgRef.current) {
-      // Deactivate existing forces
-      fgRef.current.d3Force('charge', null);
-      fgRef.current.d3Force('link', null);
-
-      // Setup new forces
-      fgRef.current.d3Force('charge', d3.forceManyBody().strength(-80));
-      fgRef.current.d3Force('link', d3.forceLink(graphData.links).distance(50));
-      fgRef.current.d3Force('center', d3.forceCenter());
-      
-      fgRef.current.zoom(1.5, 1000);
-    }
-  }, [graphData.links]);
-  
-  const handleEngineStop = useCallback(() => {
-    if (!fgRef.current || initialAnimationDone) return;
-
-    if (latestPostId) {
-      const targetNode = graphData.nodes.find(
-        (node) => node.id === latestPostId && node.type === "post"
-      );
-
-      if (targetNode && targetNode.x != null && targetNode.y != null) {
-        fgRef.current.centerAt(targetNode.x, targetNode.y, 1000);
-        fgRef.current.zoom(2, 500);
-      }
-    } else {
-      fgRef.current.zoom(1.5, 1000);
-    }
-
-    setInitialAnimationDone(true);
-  }, [initialAnimationDone, latestPostId, graphData.nodes]);
-  
-  const handleNodeClick = useCallback(
-    (node: Node) => {
-      if (node.type === "post") {
-        router.push(`/explore/${node.id}`);
-      }
-    },
-    [router]
-  );
-  
-  const handleNodeHover = (node: Node | null) => {
-    highlightLinks.clear();
-    highlightNodes.clear();
-
-    if (node) {
-      highlightNodes.add(node);
-      // Traverse links to find connected nodes
-      graphData.links.forEach((link: any) => {
-        if (link.source.id === node.id) {
-          highlightLinks.add(link);
-          highlightNodes.add(link.target);
-        } else if (link.target.id === node.id) {
-          highlightLinks.add(link);
-          highlightNodes.add(link.source);
-        }
-      });
-    }
-    setHighlightLinks(new Set(highlightLinks));
-    setHighlightNodes(new Set(highlightNodes));
-  };
-  
-  const handleCenterView = useCallback(() => {
-    fgRef.current?.zoomToFit(400, 60); // 400ms duration, 60px padding
+    // dynamically get colors from CSS variables
+    const style = getComputedStyle(document.body);
+    const primaryColor = style.getPropertyValue('--primary').trim();
+    const foregroundColor = style.getPropertyValue('--muted-foreground').trim();
+    setColors({ primary: `hsl(${primaryColor})`, foreground: `hsl(${foregroundColor})` });
   }, []);
-  
-  const paintNode = useCallback(
-    (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const isHighlighted = highlightNodes.has(node);
-      const isFaded = highlightNodes.size > 0 && !isHighlighted;
 
-      // Node circle color & style
-      if (node.type === "tag") {
-        ctx.fillStyle = isFaded ? 'rgba(16, 185, 129, 0.1)' : 'rgb(16, 185, 129)'; // Emerald-500
-      } else {
-        ctx.fillStyle = isFaded ? 'rgba(113, 113, 122, 0.1)' : 'rgb(113, 113, 122)'; // Zinc-500
-      }
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, node.val, 0, 2 * Math.PI, false);
-      ctx.fill();
+  const handleCenterView = useCallback(() => {
+    if (!svgRef.current || !zoomRef.current) return;
+    const svg = d3.select(svgRef.current);
+    svg.transition().duration(750).call(zoomRef.current.transform, d3.zoomIdentity);
+  }, []);
 
-      // Adaptive label rendering based on zoom level
-      // Hide labels when zoomed out
-      const labelVisibilityScaleThreshold = 1.5;
-      if (globalScale < labelVisibilityScaleThreshold) {
-        return;
+  useEffect(() => {
+    if (!svgRef.current || !nodes || !links) return;
+
+    const svgElement = svgRef.current;
+    const width = svgElement.parentElement?.clientWidth || 800;
+    const height = svgElement.parentElement?.clientHeight || 600;
+    
+    const svg = d3.select(svgElement)
+        .attr("viewBox", [-width / 2, -height / 2, width, height]);
+
+    zoomRef.current = d3.zoom<SVGSVGElement, unknown>().on("zoom", (event) => {
+      g.attr("transform", event.transform);
+    });
+    
+    svg.call(zoomRef.current);
+
+    svg.selectAll("*").remove();
+    const g = svg.append("g");
+
+    const simulation = d3.forceSimulation<GraphNode>(nodes)
+      .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((d: any) => d.id).distance(d => {
+        const isCategoryLink = (typeof d.source === 'object' && d.source.type === 'category') || (typeof d.target === 'object' && d.target.type === 'category');
+        return isCategoryLink ? 120 : 80;
+      }))
+      .force("charge", d3.forceManyBody().strength(-150))
+      .force("center", d3.forceCenter(0, 0))
+      .on("end", handleCenterView);
+
+    const link = g.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .attr("stroke", "#9ca3af") // gray-400
+      .attr("stroke-opacity", 0.3)
+      .attr("stroke-width", 1.5);
+
+    const nodeGroup = g.append("g")
+      .attr("class", "nodes")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+      .call(drag(simulation) as any);
+
+    nodeGroup.on("click", (event, d) => {
+      if (d.type === 'post') {
+        router.push(`/explore/${d.id}`);
       }
-      
-      const label = node.name;
-      const fontSize = 12 / globalScale;
-      ctx.font = `500 ${fontSize}px Inter, ui-sans-serif, system-ui`;
-      
-      if (isHighlighted || highlightNodes.size === 0) {
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = isFaded ? 'rgba(30, 41, 59, 0.2)' : '#1e293b'; // Slate-800
-        ctx.fillText(label, node.x, node.y + node.val + 6);
-      }
-    },
-    [highlightNodes]
-  );
+    });
+
+    const nodeCircles = nodeGroup.append("circle")
+      .attr("r", d => d.val * 2.5)
+      .attr("fill", d => {
+        if (d.type === 'category') return colors.primary;
+        if (d.type === 'tag') return colors.foreground;
+        return "#6b7280"; // gray-500 for posts
+      })
+      .attr("stroke", "#f9fafb") // gray-50
+      .attr("stroke-width", 2);
+
+    const nodeLabels = nodeGroup.append("text")
+      .text(d => d.name)
+      .attr("x", d => d.val * 2.5 + 5)
+      .attr("y", "0.31em")
+      .attr("font-size", "14px")
+      .attr("font-weight", "600")
+      .attr("fill", "#111827") // gray-900
+      .attr("paint-order", "stroke")
+      .attr("stroke", "white")
+      .attr("stroke-width", 4)
+      .style("pointer-events", "none")
+      .style("opacity", d => (d.type === 'tag' || d.type === 'category') ? 1 : 0)
+      .style("transition", "opacity 0.2s ease-in-out");
+
+    nodeGroup
+      .on("mouseover", function (event, d) {
+        const connectedNodes = new Set([d.id]);
+        links.forEach(l => {
+          const sourceId = typeof l.source === 'string' ? l.source : (l.source as GraphNode).id;
+          const targetId = typeof l.target === 'string' ? l.target : (l.target as GraphNode).id;
+          if (sourceId === d.id) connectedNodes.add(targetId);
+          if (targetId === d.id) connectedNodes.add(sourceId);
+        });
+
+        nodeGroup.style("opacity", n => connectedNodes.has(n.id) ? 1 : 0.15);
+        nodeLabels.style("opacity", n => (connectedNodes.has(n.id) || n.type === 'category' || n.type === 'tag') ? 1 : 0);
+        
+        link
+          .style('stroke', l => isLinkConnected(l, d) ? colors.primary : '#e5e7eb') // blue-500, gray-200
+          .style('stroke-opacity', l => isLinkConnected(l, d) ? 0.8 : 0.2);
+      })
+      .on("mouseout", function () {
+        nodeGroup.style("opacity", 1);
+        nodeLabels.style("opacity", d => (d.type === 'tag' || d.type === 'category') ? 1 : 0);
+        link.style('stroke', '#9ca3af').style('stroke-opacity', 0.3); // gray-400
+      });
+
+    function isLinkConnected(l: GraphLink, n: GraphNode) {
+      const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
+      const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+      return sourceId === n.id || targetId === n.id;
+    }
+    
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => (d.source as GraphNode).x!)
+        .attr("y1", d => (d.source as GraphNode).y!)
+        .attr("x2", d => (d.target as GraphNode).x!)
+        .attr("y2", d => (d.target as GraphNode).y!);
+      nodeGroup.attr("transform", d => `translate(${d.x!},${d.y!})`);
+    });
+
+    return () => {
+      simulation.stop();
+    };
+  }, [nodes, links, router, handleCenterView, colors]);
 
   return (
     <TooltipProvider>
-      <div className="w-full h-full bg-background overflow-hidden relative">
-        <ForceGraph2D
-          ref={fgRef}
-          graphData={graphData}
-          nodeCanvasObject={paintNode}
-          linkColor={(link) => (highlightLinks.has(link) ? 'rgba(249, 115, 22, 0.6)' : 'rgba(113, 113, 122, 0.15)')}
-          linkWidth={(link) => (highlightLinks.has(link) ? 1.5 : 0.5)}
-          onEngineStop={handleEngineStop}
-          onNodeClick={handleNodeClick}
-          onNodeHover={handleNodeHover}
-          cooldownTicks={100}
-          warmupTicks={400} // Increased warmup ticks for better initial layout
-        />
+      <div className={cn("w-full h-full bg-background overflow-hidden relative", className)}>
+        <svg ref={svgRef} className="w-full h-full cursor-grab active:cursor-grabbing"></svg>
         <div className="absolute bottom-6 left-6 z-10">
           <Link
             href="/explore"

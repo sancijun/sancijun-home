@@ -1,11 +1,10 @@
 import type { Post } from "contentlayer/generated";
 
 export interface GraphNode {
-  id: string; // slug for posts, tag name for tags
-  name: string; // title for posts, tag name for tags
-  type: "post" | "tag";
+  id: string; // slug for posts, tag name for tags, category name for categories
+  name: string; // title for posts, tag name for tags, category name for categories
+  type: "post" | "tag" | "category";
   val: number; // size
-  category?: string; // only for posts
 }
 
 export interface GraphLink {
@@ -19,13 +18,19 @@ interface GraphData {
 }
 
 export const generateGraphData = (posts: Post[]): GraphData => {
-  // Step 1: Count tag occurrences to find tags used more than once
   const tagCountMap: { [key: string]: number } = {};
+  const categoryCountMap: { [key: string]: number } = {};
+
   posts.forEach(post => {
+    // Count tags
     if (post.tags) {
       post.tags.forEach(tag => {
         tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
       });
+    }
+    // Count categories
+    if (post.category) {
+      categoryCountMap[post.category] = (categoryCountMap[post.category] || 0) + 1;
     }
   });
 
@@ -36,27 +41,30 @@ export const generateGraphData = (posts: Post[]): GraphData => {
     }
   }
 
-  // Step 2: Create nodes for all posts
   const postNodes: GraphNode[] = posts.map((post) => ({
     id: post.slugAsParams,
     name: post.title,
     type: "post",
-    val: 2.5, // Base size for post nodes
-    category: post.category,
+    val: 2.5,
   }));
   
-  // Step 3: Create nodes for shared tags only
   const tagNodes: GraphNode[] = Array.from(sharedTags).map(tag => ({
     id: tag,
     name: `#${tag}`,
     type: "tag",
-    // Make popular tags bigger. Base size 1 + 0.25 per connection.
     val: 1 + (tagCountMap[tag] * 0.25)
   }));
+  
+  const categoryNodes: GraphNode[] = Object.keys(categoryCountMap).map(category => ({
+    id: category,
+    name: category,
+    type: "category",
+    val: 2 + (categoryCountMap[category] * 0.5) // Categories are more important, so bigger base size
+  }));
 
-  // Step 4: Create links between posts and their shared tags
   const links: GraphLink[] = [];
   posts.forEach((post) => {
+    // Links to tags
     if (post.tags) {
       post.tags.forEach((tag) => {
         if (sharedTags.has(tag)) {
@@ -67,9 +75,16 @@ export const generateGraphData = (posts: Post[]): GraphData => {
         }
       });
     }
+    // Link to category
+    if (post.category) {
+      links.push({
+        source: post.slugAsParams,
+        target: post.category,
+      });
+    }
   });
 
-  const finalNodes = [...postNodes, ...tagNodes];
+  const finalNodes = [...postNodes, ...tagNodes, ...categoryNodes];
 
   return { nodes: finalNodes, links };
 }; 
