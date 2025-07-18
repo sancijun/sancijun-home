@@ -9,7 +9,7 @@ import { Download, FileText, ExternalLink, Image as ImageIcon, Star, Repeat, Cod
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { StatsSection } from "./stats-section"
+// 移除 StatsSection 导入
 
 export const metadata: Metadata = {
   title: "微信读书工具箱 - " + siteConfig.name,
@@ -60,7 +60,7 @@ export default function WereadToolboxPage() {
               </div>
               
               {/* CTA 按钮 */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 pb-6">
                 <Link
                   href="https://github.com/sancijun/weread-toolbox/releases"
                   target="_blank"
@@ -89,8 +89,11 @@ export default function WereadToolboxPage() {
                 </Link>
               </div>
               
-              {/* 统计数据 */}
-              <StatsSection />
+              {/* 添加一个特性预览标签，替代原来的统计数据 */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/80 backdrop-blur border border-border/50 shadow-sm">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium">轻松管理您的阅读笔记和知识</span>
+              </div>
             </div>
             
             {/* 右侧视觉区域 */}
