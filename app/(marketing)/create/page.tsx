@@ -157,8 +157,8 @@ export default async function CreatePage() {
                     {/* 操作按钮 */}
                     <div className="flex gap-3 pt-4 mt-auto">
                       <Link
-                        href={project.url}
-                        target="_blank"
+                        href={project.slug.includes("weread-toolbox") ? `/create/weread-toolbox` : project.url}
+                        target={project.slug.includes("weread-toolbox") ? "_self" : "_blank"}
                         rel="noopener noreferrer"
                         className={cn(
                           buttonVariants({ size: "default" }),
@@ -166,8 +166,8 @@ export default async function CreatePage() {
                         )}
                       >
                         <Download className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                        立即下载
-                        <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        {project.slug.includes("weread-toolbox") ? "查看详情" : "立即下载"}
+                        {!project.slug.includes("weread-toolbox") && <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
                       </Link>
                       
                       {project.docs && (

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { allProjects } from "contentlayer/generated"
 import { Metadata } from "next"
 
@@ -44,6 +44,11 @@ export async function generateStaticParams(): Promise<ProjectPageProps["params"]
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
+  // 对微信读书工具箱进行重定向
+  if (params.slug === "weread-toolbox") {
+    redirect("/create/weread-toolbox")
+  }
+  
   const project = await getProjectFromParams(params)
 
   if (!project) {
