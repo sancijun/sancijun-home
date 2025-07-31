@@ -1,5 +1,3 @@
-import { allPosts } from "contentlayer/generated"
-import { compareDesc } from "date-fns"
 import { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
@@ -11,9 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function JourneyPage() {
-  const posts = allPosts
-    .filter((post) => post.published && post.category === "环国自驾")
-    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
-
-  return <JourneyClientPage posts={posts} />
+  return <JourneyClientPage />
 }

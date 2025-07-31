@@ -14,6 +14,7 @@ const nextConfig = {
       "i1.hdslb.com",
       "i2.hdslb.com",
       "cdn.jsdelivr.net",
+      "sns-webpic-qc.xhscdn.com",
     ],
   },
   experimental: {

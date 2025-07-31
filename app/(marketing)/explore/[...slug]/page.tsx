@@ -18,6 +18,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { SlidesPostPage } from "@/components/slides-post-page"
 
 interface PostPageProps {
   params: {
@@ -64,6 +65,10 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
+  if (post.format === "slides") {
+    return <SlidesPostPage post={post} />
+  }
+
   return (
     <article className="container relative max-w-3xl py-6 lg:py-10">
       <Link
@@ -93,35 +98,7 @@ export default async function PostPage({ params }: PostPageProps) {
         )}
       </div>
 
-      {post.format === "slides" && post.images && post.images.length > 0 ? (
-        <div className="my-8">
-          <Carousel className="w-full">
-            <CarouselContent>
-              {post.images.map((imageUrl, index) => (
-                <CarouselItem key={index}>
-                  <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={imageUrl}
-                      alt={`${post.title} - 幻灯片 ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 75vw"
-                      priority={index === 0}
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-4" />
-            <CarouselNext className="right-4" />
-          </Carousel>
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              {post.images.length} 张幻灯片 • 使用左右箭头或滑动浏览
-            </p>
-          </div>
-        </div>
-      ) : post.format === "video" && post.videoUrl ? (
+      {post.format === "video" && post.videoUrl ? (
         <div className="my-8">
           <Link
             href={post.videoUrl}
