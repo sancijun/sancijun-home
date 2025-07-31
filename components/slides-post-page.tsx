@@ -49,8 +49,8 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
     <div className="container max-w-5xl py-6 lg:py-10">
       <Card className="overflow-hidden border rounded-xl shadow-sm">
         <div className="flex flex-col lg:flex-row">
-          {/* 左侧图片区域 - 自适应图片比例 */}
-          <div className="lg:w-1/2 bg-blue-100/10 flex items-center justify-center p-4 lg:p-8">
+          {/* 左侧图片区域 */}
+          <div className="lg:w-1/2 bg-blue-100/10 flex items-center justify-center p-4 lg:p-6">
             <Carousel 
               className="w-full" 
               setApi={setApi}
@@ -58,13 +58,17 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
               <CarouselContent>
                 {post.images?.map((imageUrl, index) => (
                   <CarouselItem key={index} className="flex items-center justify-center">
-                    <div className="relative w-full max-w-[400px] mx-auto">
+                    <div className="relative w-full flex items-center justify-center">
                       <Image
                         src={imageUrl}
                         alt={`${post.title} - Slide ${index + 1}`}
-                        width={400}
-                        height={600}
-                        className="object-contain max-h-[70vh] w-auto h-auto mx-auto"
+                        width={600}
+                        height={800}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                        }}
                         priority={index === 0}
                       />
                     </div>
