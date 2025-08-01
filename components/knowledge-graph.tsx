@@ -23,6 +23,7 @@ interface KnowledgeGraphProps {
     links: GraphLink[];
   };
   className?: string;
+  latestPostId?: string;
 }
 
 const drag = (simulation: d3.Simulation<GraphNode, undefined>) => {
@@ -46,7 +47,7 @@ const drag = (simulation: d3.Simulation<GraphNode, undefined>) => {
     .on("end", dragended);
 };
 
-const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
+const KnowledgeGraph = ({ graphData, className, latestPostId }: KnowledgeGraphProps) => {
   const router = useRouter();
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -113,6 +114,23 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
     const svg = d3.select(svgElement)
         .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
+    // Add a pulsing animation for the latest post
+    if (!svg.select("defs").node()) {
+      const defs = svg.append("defs");
+      defs.append("filter")
+        .attr("id", "glow")
+        .append("feGaussianBlur")
+        .attr("stdDeviation", "2.5")
+        .attr("result", "coloredBlur");
+      
+      const animate = defs.append("animate")
+        .attr("id", "pulseAnimation")
+        .attr("attributeName", "r")
+        .attr("values", "5;8;5")
+        .attr("dur", "2s")
+        .attr("repeatCount", "indefinite");
+    }
+
     zoomRef.current = d3.zoom<SVGSVGElement, unknown>().on("zoom", (event) => {
       g.attr("transform", event.transform);
     });
@@ -156,12 +174,28 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
     const nodeCircles = nodeGroup.append("circle")
       .attr("r", d => d.val * 2.5)
       .attr("fill", d => {
+        if (d.id === latestPostId) return "#ef4444"; // red-500 for latest post
         if (d.type === 'category') return colors.primary;
         if (d.type === 'tag') return colors.foreground;
         return "#6b7280"; // gray-500 for posts
       })
-      .attr("stroke", "#f9fafb") // gray-50
-      .attr("stroke-width", 2);
+      .attr("stroke", d => d.id === latestPostId ? "#fee2e2" : "#f9fafb") // red-100 for latest post, gray-50 for others
+      .attr("stroke-width", d => d.id === latestPostId ? 3 : 2)
+      .attr("filter", d => d.id === latestPostId ? "url(#glow)" : null);
+
+    // Add pulsing animation to latest post node
+    if (latestPostId) {
+      nodeCircles.each(function(d) {
+        if (d.id === latestPostId) {
+          const circle = d3.select(this);
+          circle.append("animate")
+            .attr("attributeName", "r")
+            .attr("values", `${d.val * 2.5};${d.val * 3};${d.val * 2.5}`)
+            .attr("dur", "2s")
+            .attr("repeatCount", "indefinite");
+        }
+      });
+    }
 
     const nodeLabels = nodeGroup.append("text")
       .text(d => d.name)
@@ -174,7 +208,7 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
       .attr("stroke", "white")
       .attr("stroke-width", 4)
       .style("pointer-events", "none")
-      .style("opacity", d => (d.type === 'tag' || d.type === 'category') ? 1 : 0)
+      .style("opacity", d => (d.type === 'tag' || d.type === 'category' || d.id === latestPostId) ? 1 : 0)
       .style("transition", "opacity 0.2s ease-in-out");
 
     nodeGroup
@@ -196,7 +230,7 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
       })
       .on("mouseout", function () {
         nodeGroup.style("opacity", 1);
-        nodeLabels.style("opacity", d => (d.type === 'tag' || d.type === 'category') ? 1 : 0);
+        nodeLabels.style("opacity", d => (d.type === 'tag' || d.type === 'category' || d.id === latestPostId) ? 1 : 0);
         link.style('stroke', '#9ca3af').style('stroke-opacity', 0.3); // gray-400
       });
 
@@ -218,7 +252,7 @@ const KnowledgeGraph = ({ graphData, className }: KnowledgeGraphProps) => {
     return () => {
       simulation.stop();
     };
-  }, [nodes, links, router, handleCenterView, colors]);
+  }, [nodes, links, router, handleCenterView, colors, latestPostId]);
 
   return (
     <TooltipProvider>

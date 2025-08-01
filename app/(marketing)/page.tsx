@@ -47,7 +47,7 @@ export default function IndexPage() {
     articles: allPosts.filter(p => p.published).length,
     projects: allProjects.filter(p => p.published).length,
     cities: 12,
-    daysTraveling: Math.floor((new Date().getTime() - new Date('2024-01-01').getTime()) / (1000 * 60 * 60 * 24))
+    daysTraveling: Math.floor((new Date().getTime() - new Date('2025-07-05').getTime()) / (1000 * 60 * 60 * 24)) + 1
   }
 
   return (

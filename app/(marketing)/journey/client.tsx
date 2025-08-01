@@ -23,14 +23,81 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { journeyConfig } from "@/config/journey"
-import { journeyPhotos } from "@/config/photos"
-import { JourneyPhotoGallery } from "@/components/journey-photo-gallery"
+import { JourneyPhotoGallery, JourneyPhoto } from "@/components/journey-photo-gallery"
 
 export default function JourneyClientPage() {
   // 获取并处理文章数据
   const posts = allPosts
     .filter((post) => post.published && post.category === "环国自驾")
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
+
+  // 从文章中提取照片数据
+  const journeyPhotos: JourneyPhoto[] = posts
+    .filter(post => post.image)
+    .map((post, index) => {
+      // 根据图片名称推断宽高比
+      // 假设文件名中包含 'portrait' 表示竖图，'panorama' 表示全景图，其他为标准横图
+      const isPortrait = post.image.toLowerCase().includes('portrait');
+      const isPanorama = post.image.toLowerCase().includes('panorama');
+      
+      let width = 1600;
+      let height = 1200;
+      
+      if (isPortrait) {
+        width = 1200;
+        height = 1800;
+      } else if (isPanorama) {
+        width = 2400;
+        height = 1200;
+      }
+      
+      return {
+        id: `photo-${post._id}`,
+        src: post.image,
+        alt: post.title,
+        location: post.location ? `${post.location[0].toFixed(2)}, ${post.location[1].toFixed(2)}` : undefined,
+        date: formatDate(post.date),
+        width,
+        height,
+      };
+    });
+
+  // 如果文章中有多张图片，也添加到照片墙中
+  const additionalPhotos: JourneyPhoto[] = [];
+  posts.forEach(post => {
+    if (post.images && post.images.length > 0) {
+      post.images.forEach((img, imgIndex) => {
+        if (img !== post.image) { // 避免重复添加主图
+          const isPortrait = img.toLowerCase().includes('portrait');
+          const isPanorama = img.toLowerCase().includes('panorama');
+          
+          let width = 1600;
+          let height = 1200;
+          
+          if (isPortrait) {
+            width = 1200;
+            height = 1800;
+          } else if (isPanorama) {
+            width = 2400;
+            height = 1200;
+          }
+          
+          additionalPhotos.push({
+            id: `photo-${post._id}-${imgIndex}`,
+            src: img,
+            alt: `${post.title} - 图${imgIndex + 1}`,
+            location: post.location ? `${post.location[0].toFixed(2)}, ${post.location[1].toFixed(2)}` : undefined,
+            date: formatDate(post.date),
+            width,
+            height,
+          });
+        }
+      });
+    }
+  });
+  
+  // 合并主图和额外图片
+  const allJourneyPhotos = [...journeyPhotos, ...additionalPhotos];
 
   // 获取最新的一篇文章
   const latestPost = posts[0] || null
@@ -176,7 +243,7 @@ export default function JourneyClientPage() {
             <p className="text-muted-foreground text-lg">记录路上的精彩瞬间</p>
           </div>
           
-          <JourneyPhotoGallery photos={journeyPhotos} />
+          <JourneyPhotoGallery photos={allJourneyPhotos} />
         </div>
       </section>
 
@@ -321,6 +388,11 @@ function JourneyStats({ posts }: { posts: Post[] }) {
   const totalVisited = posts.length
   const progressPercentage = totalVisited > 0 ? Math.round((totalVisited / totalPlanned) * 100) : 0
 
+  // 计算在路上的天数
+  const startDate = new Date('2025-07-05')
+  const currentDate = new Date()
+  const daysOnRoad = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
   // 计算覆盖的省份
   const visitedProvinces = new Set(
     posts
@@ -340,7 +412,7 @@ function JourneyStats({ posts }: { posts: Post[] }) {
     <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">旅行统计</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="text-center">
           <div className="text-2xl font-bold text-green-600">{totalVisited}</div>
           <div className="text-sm text-gray-600">已访问</div>
@@ -350,11 +422,15 @@ function JourneyStats({ posts }: { posts: Post[] }) {
           <div className="text-sm text-gray-600">计划中</div>
         </div>
         <div className="text-center">
+          <div className="text-2xl font-bold text-orange-600">{daysOnRoad}</div>
+          <div className="text-sm text-gray-600">在路天数</div>
+        </div>
+        <div className="text-center">
           <div className="text-2xl font-bold text-purple-600">{plannedProvinces.size}</div>
           <div className="text-sm text-gray-600">涉及省份</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-orange-600">{progressPercentage}%</div>
+          <div className="text-2xl font-bold text-indigo-600">{progressPercentage}%</div>
           <div className="text-sm text-gray-600">完成度</div>
         </div>
       </div>
