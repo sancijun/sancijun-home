@@ -78,44 +78,45 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
     }
   }, [selectedPhoto, photoIndex, photos])
 
+  // 针对竖版图片的宽高比处理
+  const getPhotoStyle = (index: number) => {
+    // 使用图片ID作为随机种子，确保相同图片每次渲染比例一致
+    const seed = photos[index].id.charCodeAt(0) + photos[index].id.charCodeAt(1) || 0
+    const isNineToSixteen = seed % 3 === 0; // 约1/3的图片是9:16比例
+    
+    // 设置竖版图片的宽高比：4:3或9:16
+    const aspectRatio = isNineToSixteen ? 9/16 : 4/3;
+    const paddingBottom = `${(1 / aspectRatio) * 100}%`;
+    
+    return { paddingBottom };
+  };
+
   return (
     <div className={cn("w-full", className)}>
-      {/* Masonry grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* 统一大小的网格，每行最多9张图片 */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-1 md:gap-2">
         {photos.map((photo, index) => {
-          // Calculate aspect ratio to determine grid span
-          const aspectRatio = photo.width / photo.height
-          
-          // 根据宽高比计算容器的宽高比样式
-          const aspectRatioStyle = { paddingBottom: `${(photo.height / photo.width) * 100}%` };
+          const { paddingBottom } = getPhotoStyle(index);
           
           return (
             <div 
               key={photo.id}
-              className={cn(
-                "cursor-pointer overflow-hidden rounded-md border bg-card hover:shadow-lg transition-all duration-300",
-                aspectRatio > 1.5 && "col-span-2", // 宽图横跨两列
-                aspectRatio < 0.8 && "row-span-2", // 高图横跨两行
-                (index === 0 || index % 12 === 0) && "col-span-2 row-span-2" // 特色图片
-              )}
+              className="cursor-pointer overflow-hidden rounded-md border bg-card hover:shadow-lg transition-all duration-300"
               onClick={() => setSelectedPhoto(photo)}
             >
               {/* 使用 padding-bottom 技巧保持宽高比 */}
-              <div className="relative w-full" style={aspectRatioStyle}>
+              <div className="relative w-full" style={{ paddingBottom }}>
                 <Image
                   src={photo.src}
                   alt={photo.alt}
                   fill
                   className="object-cover transition-transform duration-500 hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  priority={index < 4}
+                  sizes="(max-width: 640px) 33vw, (max-width: 768px) 16vw, (max-width: 1024px) 12vw, 11vw"
+                  priority={index < 9}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                  <div className="text-white text-sm font-medium w-full">
-                    <p className="line-clamp-2">{photo.alt}</p>
-                    {photo.location && (
-                      <p className="text-xs text-white/80 mt-1">{photo.location}</p>
-                    )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                  <div className="text-white text-xs font-medium w-full">
+                    <p className="line-clamp-1 text-[10px]">{photo.alt}</p>
                   </div>
                 </div>
               </div>

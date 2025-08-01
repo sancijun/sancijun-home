@@ -314,7 +314,7 @@ export default function ExplorePage() {
             探索
           </h1>
           <p className="text-lg text-muted-foreground">
-          在这里，代码与山河交织，AI与哲思碰撞。
+          在这里，代码与山河交织，AI与思辨碰撞。
           <br/>
           每一篇文章，都是一次技术实践、在地体验与个人思考的融合。
           </p>

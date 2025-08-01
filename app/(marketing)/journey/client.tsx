@@ -15,7 +15,6 @@ import {
   Clock,
   Star,
   Archive,
-  Navigation,
   Image as ImageIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -24,6 +23,21 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { journeyConfig } from "@/config/journey"
 import { JourneyPhotoGallery, JourneyPhoto } from "@/components/journey-photo-gallery"
+
+// 确保地图组件只在客户端渲染
+const JourneyMap = dynamic(() => import("@/components/journey-map"), {
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center bg-muted/50">
+      <div className="text-center space-y-4">
+        <div className="animate-spin">
+          <Compass className="h-8 w-8 text-primary mx-auto" />
+        </div>
+        <p className="text-muted-foreground">探索地图加载中...</p>
+      </div>
+    </div>
+  ),
+  ssr: false,
+})
 
 export default function JourneyClientPage() {
   // 获取并处理文章数据
@@ -35,20 +49,18 @@ export default function JourneyClientPage() {
   const journeyPhotos: JourneyPhoto[] = posts
     .filter(post => post.image)
     .map((post, index) => {
-      // 根据图片名称推断宽高比
-      // 假设文件名中包含 'portrait' 表示竖图，'panorama' 表示全景图，其他为标准横图
-      const isPortrait = post.image.toLowerCase().includes('portrait');
-      const isPanorama = post.image.toLowerCase().includes('panorama');
+      // 假设所有图片都是竖版图片
+      // 使用文章ID作为随机种子，确保相同文章每次渲染比例一致
+      const seed = post._id.charCodeAt(0) + post._id.charCodeAt(1) || 0;
+      const isNineToSixteen = seed % 3 === 0; // 约1/3的图片是9:16比例
       
-      let width = 1600;
-      let height = 1200;
+      // 设置竖版图片的宽高比：4:3或9:16
+      let width = 3;
+      let height = 4;
       
-      if (isPortrait) {
-        width = 1200;
-        height = 1800;
-      } else if (isPanorama) {
-        width = 2400;
-        height = 1200;
+      if (isNineToSixteen) {
+        width = 9;
+        height = 16;
       }
       
       return {
@@ -68,18 +80,17 @@ export default function JourneyClientPage() {
     if (post.images && post.images.length > 0) {
       post.images.forEach((img, imgIndex) => {
         if (img !== post.image) { // 避免重复添加主图
-          const isPortrait = img.toLowerCase().includes('portrait');
-          const isPanorama = img.toLowerCase().includes('panorama');
+          // 同样假设所有图片都是竖版图片
+          // 使用文章ID和图片索引作为随机种子
+          const seed = (post._id.charCodeAt(0) + imgIndex) || 0;
+          const isNineToSixteen = seed % 3 === 0; // 约1/3的图片是9:16比例
           
-          let width = 1600;
-          let height = 1200;
+          let width = 3;
+          let height = 4;
           
-          if (isPortrait) {
-            width = 1200;
-            height = 1800;
-          } else if (isPanorama) {
-            width = 2400;
-            height = 1200;
+          if (isNineToSixteen) {
+            width = 9;
+            height = 16;
           }
           
           additionalPhotos.push({
@@ -99,8 +110,8 @@ export default function JourneyClientPage() {
   // 合并主图和额外图片
   const allJourneyPhotos = [...journeyPhotos, ...additionalPhotos];
 
-  // 获取最新的一篇文章
-  const latestPost = posts[0] || null
+  // 获取最新的三篇文章
+  const latestPosts = posts.slice(0, 3)
 
   // 获取精选故事（置顶的或者有特定标签的文章）
   const featuredPosts = posts
@@ -113,24 +124,21 @@ export default function JourneyClientPage() {
   const [hoveredPostId, setHoveredPostId] = React.useState<string | null>(null)
   const [activePostId, setActivePostId] = React.useState<string | null>(null)
 
-  const JourneyMap = React.useMemo(
-    () =>
-      dynamic(() => import("@/components/journey-map"), {
-        loading: () => (
-          <div className="h-full w-full flex items-center justify-center bg-muted/50">
-            <div className="text-center space-y-4">
-              <div className="animate-spin">
-                <Compass className="h-8 w-8 text-primary mx-auto" />
-              </div>
-              <p className="text-muted-foreground">探索地图加载中...</p>
-            </div>
+  // 确保地图组件只在客户端渲染
+  const JourneyMap = dynamic(() => import("@/components/journey-map"), {
+    loading: () => (
+      <div className="h-full w-full flex items-center justify-center bg-muted/50">
+        <div className="text-center space-y-4">
+          <div className="animate-spin">
+            <Compass className="h-8 w-8 text-primary mx-auto" />
           </div>
-        ),
-        ssr: false,
-      }),
-    []
-  )
-
+          <p className="text-muted-foreground">探索地图加载中...</p>
+        </div>
+      </div>
+    ),
+    ssr: false,
+  })
+  
   // 滚动到指定模块
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -194,15 +202,6 @@ export default function JourneyClientPage() {
                    <Star className="w-4 h-4 mr-2" />
                    精选故事
                  </Button>
-                 <Button
-                   variant="secondary"
-                   size="sm"
-                   onClick={() => scrollToSection('road-ahead')}
-                   className="bg-white/10 backdrop-blur-sm border-gray-300 text-black hover:bg-gray-100 justify-start"
-                 >
-                   <Navigation className="w-4 h-4 mr-2" />
-                   旅行计划
-                 </Button>
                  <Link href="/journey/archive">
                    <Button
                      variant="secondary"
@@ -220,78 +219,68 @@ export default function JourneyClientPage() {
        </section>
 
       {/* 最新动态模块 */}
-      {latestPost && (
+      {latestPosts.length > 0 && (
         <section id="latest-update" className="py-16 bg-background">
-          <div className="container">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="font-heading text-3xl font-bold">最新动态</h2>
-              <p className="text-muted-foreground text-lg">最近的旅行足迹和思考</p>
-            </div>
+          <div className="flex justify-center">
+            <div className="w-[75%]">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="font-heading text-3xl font-bold">最新动态</h2>
+                <p className="text-muted-foreground text-lg">最近的旅行足迹和思考</p>
+              </div>
 
-            <div className="max-w-4xl mx-auto">
-              <LatestUpdateCard post={latestPost} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {latestPosts.map((post) => (
+                  <FeaturedStoryCard key={post._id} post={post} />
+                ))}
+              </div>
+              
+              {/* 查看更多按钮 */}
+              <div className="flex justify-center mt-10">
+                <Link href="/journey/archive">
+                  <Button variant="outline" className="px-8 border-primary/30 hover:bg-primary/5 group">
+                    查看更多旅行日志
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
       )}
 
       {/* 照片墙/瀑布流 */}
-      <section id="photo-gallery" className="py-16 bg-muted/30">
-        <div className="container">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="font-heading text-3xl font-bold">旅行相册</h2>
-            <p className="text-muted-foreground text-lg">记录路上的精彩瞬间</p>
+      <section id="photo-gallery" className="py-16 bg-background">
+        <div className="flex justify-center">
+          <div className="w-[75%]">
+            <div className="text-center space-y-4 mb-12">
+              <h2 className="font-heading text-3xl font-bold">旅行相册</h2>
+              <p className="text-muted-foreground text-lg">记录路上的精彩瞬间</p>
+            </div>
+            
+            <JourneyPhotoGallery photos={allJourneyPhotos} />
           </div>
-          
-          <JourneyPhotoGallery photos={allJourneyPhotos} />
         </div>
       </section>
 
       {/* 精选故事模块 */}
       {featuredPosts.length > 0 && (
         <section id="featured-stories" className="py-16 bg-background">
-          <div className="container">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="font-heading text-3xl font-bold">精选故事</h2>
-              <p className="text-muted-foreground text-lg">那些值得回味的旅行时光</p>
-            </div>
+          <div className="flex justify-center">
+            <div className="w-[75%]">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="font-heading text-3xl font-bold">精选故事</h2>
+                <p className="text-muted-foreground text-lg">那些值得回味的旅行时光</p>
+              </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {featuredPosts.map((post) => (
-                <FeaturedStoryCard key={post._id} post={post} />
-              ))}
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {featuredPosts.map((post) => (
+                  <FeaturedStoryCard key={post._id} post={post} />
+                ))}
+              </div>
             </div>
           </div>
         </section>
       )}
-
-      {/* 旅行计划模块 */}
-      <section id="road-ahead" className="py-16 bg-muted/30">
-        <div className="container">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="font-heading text-3xl font-bold">旅行计划</h2>
-            <p className="text-muted-foreground text-lg">即将到达的目的地</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <RoadAheadSection />
-          </div>
-        </div>
-      </section>
-
-      {/* 旅行统计 */}
-      <section id="journey-stats" className="py-16 bg-background">
-        <div className="container">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="font-heading text-3xl font-bold">旅行数据</h2>
-            <p className="text-muted-foreground text-lg">环国自驾的数字足迹</p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <JourneyStats posts={posts} />
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
@@ -346,7 +335,7 @@ function LatestUpdateCard({ post }: { post: Post }) {
 // 精选故事卡片组件
 function FeaturedStoryCard({ post }: { post: Post }) {
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
       <div className="aspect-[16/9] relative overflow-hidden">
         <Image
           src={post.image}
@@ -354,6 +343,12 @@ function FeaturedStoryCard({ post }: { post: Post }) {
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        {/* 悬浮标签 */}
+        <div className="absolute top-3 left-3">
+          <Badge variant="secondary" className="bg-white/80 backdrop-blur-sm text-black/80 font-medium">
+            {post.category}
+          </Badge>
+        </div>
       </div>
       <CardContent className="p-6 space-y-4">
         <h3 className="font-heading text-xl font-semibold line-clamp-2">
@@ -362,14 +357,14 @@ function FeaturedStoryCard({ post }: { post: Post }) {
         <p className="text-muted-foreground line-clamp-3">
           {post.description}
         </p>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
           <span className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
+            <Calendar className="w-3.5 h-3.5" />
             {formatDate(post.date)}
           </span>
           {post.location && (
             <span className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
+              <MapPin className="w-3.5 h-3.5" />
               坐标
             </span>
           )}
@@ -379,134 +374,5 @@ function FeaturedStoryCard({ post }: { post: Post }) {
         <span className="sr-only">阅读文章</span>
       </Link>
     </Card>
-  )
-}
-
-// 旅行统计组件
-function JourneyStats({ posts }: { posts: Post[] }) {
-  const totalPlanned = journeyConfig.plannedRoute2024.length
-  const totalVisited = posts.length
-  const progressPercentage = totalVisited > 0 ? Math.round((totalVisited / totalPlanned) * 100) : 0
-
-  // 计算在路上的天数
-  const startDate = new Date('2025-07-05')
-  const currentDate = new Date()
-  const daysOnRoad = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
-
-  // 计算覆盖的省份
-  const visitedProvinces = new Set(
-    posts
-      .filter(post => post.location)
-      .map(post => {
-        // 这里可以根据位置坐标推断省份，暂时用一个简单的映射
-        // 实际应用中可能需要更复杂的地理编码
-        return "已访问省份" // 占位符
-      })
-  )
-
-  const plannedProvinces = new Set(
-    journeyConfig.plannedRoute2024.map(dest => dest.province)
-  )
-
-  return (
-    <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">旅行统计</h3>
-
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-green-600">{totalVisited}</div>
-          <div className="text-sm text-gray-600">已访问</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">{totalPlanned}</div>
-          <div className="text-sm text-gray-600">计划中</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-orange-600">{daysOnRoad}</div>
-          <div className="text-sm text-gray-600">在路天数</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600">{plannedProvinces.size}</div>
-          <div className="text-sm text-gray-600">涉及省份</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-indigo-600">{progressPercentage}%</div>
-          <div className="text-sm text-gray-600">完成度</div>
-        </div>
-      </div>
-
-      {/* 进度条 */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm text-gray-600">
-          <span>旅行进度</span>
-          <span>{totalVisited} / {totalPlanned}</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-      </div>
-
-      {/* 省份分布 */}
-      <div className="space-y-2">
-        <h4 className="font-medium text-gray-900">计划覆盖省份</h4>
-        <div className="flex flex-wrap gap-2">
-          {Array.from(plannedProvinces).map(province => (
-            <span
-              key={province}
-              className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
-            >
-              {province}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// 旅行计划组件
-function RoadAheadSection() {
-  const upcomingPlans = [
-    {
-      destination: "川西高原",
-      timeframe: "2024年春季",
-      description: "探索四川西部的高原风光，体验藏族文化",
-      status: "计划中"
-    },
-    {
-      destination: "新疆天山",
-      timeframe: "2024年夏季",
-      description: "穿越天山南北，感受大美新疆的壮阔",
-      status: "准备中"
-    },
-    {
-      destination: "东北雪国",
-      timeframe: "2024年冬季",
-      description: "在冰天雪地中寻找不一样的中国",
-      status: "构想中"
-    }
-  ]
-
-  return (
-    <div className="space-y-6">
-      {upcomingPlans.map((plan, index) => (
-        <Card key={index} className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="space-y-2 flex-1">
-              <div className="flex items-center gap-3">
-                <h3 className="font-heading text-xl font-semibold">{plan.destination}</h3>
-                <Badge variant="outline">{plan.status}</Badge>
-              </div>
-              <p className="text-muted-foreground">{plan.timeframe}</p>
-              <p className="text-muted-foreground leading-relaxed">{plan.description}</p>
-            </div>
-            <Navigation className="w-6 h-6 text-muted-foreground mt-1" />
-          </div>
-        </Card>
-      ))}
-    </div>
   )
 }

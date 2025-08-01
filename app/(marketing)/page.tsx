@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress"
 import KnowledgeGraph from "@/components/knowledge-graph"
 import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap, Target, TrendingUp, Star, Globe, FileText, Rocket, Clock } from "lucide-react"
 import HeroBackground from "@/components/hero-background"
+import { journeyConfig } from "@/config/journey"
 
 export default function IndexPage() {
   const posts = allPosts
@@ -37,16 +38,29 @@ export default function IndexPage() {
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
     .slice(0, 3)
 
+  // 获取环国自驾文章
   const journeyPost = allPosts
     .filter((post) => post.published && post.category === "环国自驾")
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
     .slice(0, 1)[0]
 
   // 统计数据
+  const journeyPosts = allPosts.filter(p => p.published && p.category === "环国自驾")
+  
+  // 计算已访问的城市数量（根据文章中的位置信息）
+  const visitedCities = new Set()
+  journeyPosts.forEach(post => {
+    if (post.location && post.location.length === 2) {
+      // 使用位置坐标的字符串表示作为唯一标识
+      const locationKey = `${post.location[0].toFixed(1)},${post.location[1].toFixed(1)}`
+      visitedCities.add(locationKey)
+    }
+  })
+
   const stats = {
     articles: allPosts.filter(p => p.published).length,
     projects: allProjects.filter(p => p.published).length,
-    cities: 12,
+    cities: visitedCities.size || 0,
     daysTraveling: Math.floor((new Date().getTime() - new Date('2025-07-05').getTime()) / (1000 * 60 * 60 * 24)) + 1
   }
 
@@ -88,7 +102,7 @@ export default function IndexPage() {
                 href="/explore"
                 className={cn(buttonVariants({ size: "lg" }), "h-12 px-8 text-base")}
               >
-                进入数字花园
+                探索我的数字花园
               </Link>
               <Link
                 href="/create"
@@ -97,7 +111,7 @@ export default function IndexPage() {
                   "h-12 px-8 text-base bg-background/50 backdrop-blur-sm"
                 )}
               >
-                见证创造作品
+                查看我创造的作品
               </Link>
             </div>
             
@@ -108,19 +122,27 @@ export default function IndexPage() {
               <div className="p-4 bg-background/40 backdrop-blur-md rounded-2xl border border-border/30">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                   {[
-                    { label: "原创文章", value: stats.articles, icon: FileText },
-                    { label: "创造作品", value: stats.projects, icon: Rocket },
-                    { label: "足迹城市", value: stats.cities, icon: Globe },
-                    { label: "在路天数", value: stats.daysTraveling, icon: Clock },
+                    { label: "原创文章", value: stats.articles, icon: FileText, href: "/explore" },
+                    { label: "创造作品", value: stats.projects, icon: Rocket, href: "/create" },
+                    { label: "足迹城市", value: stats.cities, icon: Globe, href: "/journey" },
+                    { label: "环国天数", value: stats.daysTraveling, icon: Clock, href: "/journey" },
                   ].map((stat) => (
-                    <div key={stat.label}>
-                      <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                        {stat.value}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {stat.label}
-                      </p>
-                    </div>
+                    <Link 
+                      href={stat.href} 
+                      key={stat.label}
+                      className="group transition-all duration-300 hover:scale-105"
+                    >
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300"></div>
+                        <p className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          {stat.value}
+                        </p>
+                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 group-hover:text-primary/80 transition-colors">
+                          <stat.icon className="w-3.5 h-3.5 opacity-70" />
+                          {stat.label}
+                        </p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -143,9 +165,7 @@ export default function IndexPage() {
             </h2>
             
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              每一份内容，都是技术实践、在地体验与个人思考的三位一体。
-              <br />
-              在这里，代码与山河交织，AI与哲思碰撞。
+              代码与山河交织，AI与思辨碰撞。每篇文章都是技术实践、在地体验与个人思考的融合
             </p>
           </div>
 
@@ -210,13 +230,11 @@ export default function IndexPage() {
             </Badge>
             
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-              独立创造的<span className="text-primary">数字产品</span>
+              我创造的数字产品
             </h2>
             
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              从0到1的创造，每个产品都是我的数字名片，
-              <br />
-              旨在解决一个真实世界的问题。
+              从0到1的创造，每个产品都是我的数字名片，旨在解决一个真实世界的问题。
             </p>
           </div>
 
@@ -363,19 +381,26 @@ export default function IndexPage() {
                   <div className="bg-card/70 backdrop-blur-sm rounded-2xl p-8 space-y-6 border border-border/20">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                       {[
-                        { label: "已走过", value: "12", unit: "城市" },
-                        { label: "总里程", value: "8.5K", unit: "公里" },
-                        { label: "在路上", value: stats.daysTraveling, unit: "天" },
-                        { label: "目标", value: "34", unit: "城市" },
+                        { label: "足迹城市", value: stats.cities, unit: "", href: "/journey#journey-stats" },
+                        { label: "总里程", value: "8.5K", unit: "公里", href: "/journey#journey-stats" },
+                        { label: "在路上", value: stats.daysTraveling, unit: "天", href: "/journey#journey-stats" },
+                        { label: "目标", value: journeyConfig.plannedRoute2024.length, unit: "城市", href: "/journey#road-ahead" },
                       ].map((stat, index) => (
-                        <div key={index} className="text-center">
-                          <div className={`text-2xl sm:text-3xl font-bold text-primary`}>
-                            {stat.value}
+                        <Link 
+                          href={stat.href}
+                          key={index} 
+                          className="text-center group transition-all duration-300 hover:scale-105"
+                        >
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300"></div>
+                            <div className={`text-2xl sm:text-3xl font-bold text-primary group-hover:text-primary/90 transition-colors`}>
+                              {stat.value}
+                            </div>
+                            <div className="text-sm text-muted-foreground group-hover:text-primary/70 transition-colors">
+                              {stat.unit} {stat.label}
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {stat.unit} {stat.label}
-                          </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
 
@@ -417,7 +442,7 @@ export default function IndexPage() {
                         "h-14 px-8 text-lg border-2 bg-card/60 backdrop-blur-sm hover:bg-card/80"
                       )}
                     >
-                      阅读最新游记
+                      阅读最新故事
                     </Link>
                   </div>
                 </div>
