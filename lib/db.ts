@@ -7,10 +7,18 @@ declare global {
 }
 
 let prisma: PrismaClient
-if (process.env.NODE_ENV === "production") {
-  const adapter = new PrismaD1(process.env.DB)
+
+// Check if we're running in Cloudflare Workers environment
+const isCloudflare = typeof globalThis.cloudflare !== 'undefined' || 
+                     typeof process.env.CF_PAGES !== 'undefined' ||
+                     (process.env.NODE_ENV === "production" && process.env.DB)
+
+if (isCloudflare && process.env.DB) {
+  // Use Cloudflare D1 adapter for production on Cloudflare
+  const adapter = new PrismaD1(process.env.DB as any)
   prisma = new PrismaClient({ adapter })
 } else {
+  // Use SQLite for local development
   if (!global.cachedPrisma) {
     global.cachedPrisma = new PrismaClient()
   }

@@ -1,5 +1,6 @@
-name = "sancijun-website"
+name = "sancijun-home"
 compatibility_date = "2025-06-28" # It's a good practice to set a recent date
+compatibility_flags = ["nodejs_compat"]
 
 # These bindings are used by your application to interact with Cloudflare services.
 # You will need to fill in the database_id after you create the D1 database.
