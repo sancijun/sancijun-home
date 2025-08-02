@@ -17,8 +17,28 @@ import KnowledgeGraph from "@/components/knowledge-graph"
 import { ArrowRight, MapPin, Calendar, Users, Coffee, Car, Code, Cpu, Heart, Zap, Target, TrendingUp, Star, Globe, FileText, Rocket, Clock } from "lucide-react"
 import HeroBackground from "@/components/hero-background"
 import { journeyConfig } from "@/config/journey"
+import dynamic from "next/dynamic"
+import { useState } from "react"
+
+// 动态导入地图组件
+const JourneyMap = dynamic(() => import("@/components/journey-map"), {
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center bg-muted/50">
+      <div className="text-center space-y-4">
+        <div className="animate-spin">
+          <div className="h-8 w-8 rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
+        </div>
+        <p className="text-muted-foreground">探索地图加载中...</p>
+      </div>
+    </div>
+  ),
+  ssr: false,
+})
 
 export default function IndexPage() {
+  const [hoveredPostId, setHoveredPostId] = useState<string | null>(null)
+  const [activePostId, setActivePostId] = useState<string | null>(null)
+
   const posts = allPosts
     .filter((post) => post.published)
     .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
@@ -46,6 +66,11 @@ export default function IndexPage() {
 
   // 统计数据
   const journeyPosts = allPosts.filter(p => p.published && p.category === "环国自驾")
+  
+  // 地图数据
+  const postsWithLocation = journeyPosts.filter(
+    (post) => post.location && post.location.length === 2
+  )
   
   // 计算已访问的城市数量（根据文章中的位置信息）
   const visitedCities = new Set()
@@ -338,12 +363,12 @@ export default function IndexPage() {
         </div>
       </section>
 
-      {/* 在路上 Section - 专业重设计 */}
+      {/* 在路上 Section - 交互式地图重设计 */}
       {journeyPost && (
-        <section className="py-20 lg:py-32 min-h-screen flex flex-col items-center justify-center snap-start">
-          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="py-20 lg:py-32 h-screen flex flex-col items-center justify-center snap-start">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex flex-col">
             {/* 标题区域 */}
-            <div className="text-center space-y-6 mb-20">
+            <div className="text-center space-y-6 mb-8">
               <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
                 <Car className="w-4 h-4 mr-2" />
                 在路上 · 数字游民
@@ -360,169 +385,90 @@ export default function IndexPage() {
               </div>
             </div>
 
-            {/* 主内容区域 - 焦点式设计 */}
-            <div className="max-w-5xl mx-auto">
-              {/* 核心数据展示 - 简化为关键指标 */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                {[
-                  { 
-                    label: "足迹城市", 
-                    value: stats.cities || 1, 
-                    icon: MapPin,
-                    color: "from-blue-500 to-cyan-500"
-                  },
-                  { 
-                    label: "旅行天数", 
-                    value: stats.daysTraveling, 
-                    icon: Calendar,
-                    color: "from-green-500 to-emerald-500"
-                  },
-                  { 
-                    label: "路线站点", 
-                    value: journeyConfig.plannedRoute2024.length, 
-                    icon: Target,
-                    color: "from-purple-500 to-indigo-500"
-                  },
-                  { 
-                    label: "旅行故事", 
-                    value: journeyPosts.length, 
-                    icon: FileText,
-                    color: "from-orange-500 to-red-500"
-                  },
-                ].map((stat, index) => (
-                  <div key={index} className="group relative">
-                    <Card className="relative h-full border hover:shadow-lg transition-all duration-300 group-hover:border-primary/20 group-hover:bg-accent/5">
-                      <CardContent className="p-6 text-center">
-                        <div className="space-y-3">
-                          <div className="w-12 h-12 mx-auto rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 flex items-center justify-center">
-                            <stat.icon className="w-5 h-5 text-primary group-hover:text-primary transition-colors duration-300" />
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-3xl font-bold text-foreground">
-                              {stat.value}
+            {/* 地图容器 - 占据剩余空间 */}
+            <div className="flex-1 relative">
+              <div className="w-full h-full relative rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 to-accent/3 overflow-hidden shadow-xl">
+                <JourneyMap
+                  posts={postsWithLocation}
+                  activePostId={activePostId}
+                  onPostHover={setHoveredPostId}
+                />
+                
+                {/* 统计数据悬浮层 - 左上角 */}
+                <div className="absolute top-6 left-6 z-[1100] pointer-events-none">
+                  <div className="grid grid-cols-2 gap-3 max-w-sm pointer-events-auto">
+                    {[
+                      { 
+                        label: "足迹城市", 
+                        value: stats.cities || 1, 
+                        icon: MapPin,
+                        color: "from-blue-500/80 to-cyan-500/80"
+                      },
+                      { 
+                        label: "旅行天数", 
+                        value: stats.daysTraveling, 
+                        icon: Calendar,
+                        color: "from-green-500/80 to-emerald-500/80"
+                      },
+                      { 
+                        label: "路线站点", 
+                        value: journeyConfig.plannedRoute2024.length, 
+                        icon: Target,
+                        color: "from-purple-500/80 to-indigo-500/80"
+                      },
+                      { 
+                        label: "旅行故事", 
+                        value: journeyPosts.length, 
+                        icon: FileText,
+                        color: "from-orange-500/80 to-red-500/80"
+                      },
+                    ].map((stat, index) => (
+                      <div key={index} className="group relative">
+                        <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all duration-300 hover:shadow-lg">
+                          <CardContent className="p-4 text-center">
+                            <div className="space-y-2">
+                              <div className="w-8 h-8 mx-auto rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300 flex items-center justify-center">
+                                <stat.icon className="w-4 h-4 text-black group-hover:text-black transition-colors duration-300" />
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-2xl font-bold text-black drop-shadow-sm">
+                                  {stat.value}
+                                </div>
+                                <p className="text-xs font-medium text-black/80 drop-shadow-sm">{stat.label}</p>
+                              </div>
                             </div>
-                            <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-
-              {/* 进度与动态 - 并排设计 */}
-              <div className="grid lg:grid-cols-5 gap-8 mb-16">
-                {/* 进度卡片 - 占3列 */}
-                <div className="lg:col-span-3">
-                  <Card className="h-full border">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-semibold">环国进度</CardTitle>
-                        <Badge variant="secondary" className="text-xs">
-                          {Math.round((stats.cities / journeyConfig.plannedRoute2024.length) * 100)}% 完成
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      {/* 大进度条 */}
-                      <div className="space-y-3">
-                        <div className="relative h-4 bg-accent/30 rounded-full overflow-hidden">
-                          <div 
-                            className="absolute left-0 top-0 h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-                            style={{ width: `${(stats.cities / journeyConfig.plannedRoute2024.length) * 100}%` }}
-                          />
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">
-                            {stats.cities} / {journeyConfig.plannedRoute2024.length} 站点
-                          </span>
-                          <span className="font-medium text-foreground">
-                            预计还需 {Math.ceil((journeyConfig.plannedRoute2024.length - stats.cities) / 2)} 个月
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* 三此主义精简版 */}
-                      <div className="space-y-3 pt-2">
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="text-center p-2 rounded-lg bg-accent/20">
-                            <div className="font-medium text-foreground">此时</div>
-                            <div className="text-muted-foreground mt-1">活在当下</div>
-                          </div>
-                          <div className="text-center p-2 rounded-lg bg-accent/20">
-                            <div className="font-medium text-foreground">此地</div>
-                            <div className="text-muted-foreground mt-1">扎根现实</div>
-                          </div>
-                          <div className="text-center p-2 rounded-lg bg-accent/20">
-                            <div className="font-medium text-foreground">此身</div>
-                            <div className="text-muted-foreground mt-1">勇敢探索</div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
 
-                {/* 最新动态 - 占2列 */}
-                <div className="lg:col-span-2">
-                  <Card className="h-full border group hover:shadow-lg transition-all duration-300">
-                    <div className="relative h-32 overflow-hidden rounded-t-lg">
-                      {journeyPost.image ? (
-                        <Image
-                          src={journeyPost.image}
-                          alt={journeyPost.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <Car className="w-12 h-12 text-primary/40" />
-                        </div>
+                {/* 操作按钮悬浮层 - 右下角 */}
+                <div className="absolute bottom-6 right-6 z-[1100]">
+                  <div className="flex flex-col gap-3">
+                    <Link
+                      href="/journey"
+                      className={cn(
+                        buttonVariants({ size: "sm" }),
+                        "bg-white/10 backdrop-blur-sm border-white/20 text-black hover:bg-white/20 hover:text-black group justify-start"
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      <Badge className="absolute top-3 left-3 text-xs">
-                        最新动态
-                      </Badge>
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-relaxed">
-                        {journeyPost.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
-                        {journeyPost.description}
-                      </p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
-                        {formatDate(journeyPost.date)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-
-              {/* 行动区域 - 突出重点 */}
-              <div className="text-center space-y-6">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                  <Link
-                    href="/journey"
-                    className={cn(
-                      buttonVariants({ size: "lg" }),
-                      "flex-1 h-12 text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg group"
-                    )}
-                  >
-                    <Globe className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                    跟随我的足迹
-                  </Link>
-                  
-                  <Link
-                    href={journeyPost.slug}
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "lg" }),
-                      "flex-1 h-12 text-base border-2"
-                    )}
-                  >
-                    阅读最新故事
-                  </Link>
+                    >
+                      <Globe className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                      跟随我的足迹
+                    </Link>
+                    
+                    <Link
+                      href={journeyPost.slug}
+                      className={cn(
+                        buttonVariants({ variant: "outline", size: "sm" }),
+                        "bg-white/10 backdrop-blur-sm border-white/20 text-black hover:bg-white/20 hover:text-black justify-start"
+                      )}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      阅读最新故事
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
