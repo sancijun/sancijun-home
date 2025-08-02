@@ -39,9 +39,9 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
             <div className="absolute right-2 top-2">
               <Badge
                 variant="default"
-                className="bg-red-500 hover:bg-red-600 text-white border-0"
+                className="border-0 bg-red-500 text-white hover:bg-red-600"
               >
-                <Pin className="w-3 h-3 mr-1" />
+                <Pin className="mr-1 size-3" />
                 置顶
               </Badge>
             </div>
@@ -52,11 +52,11 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
             <Badge
               variant="default"
               className={cn(
-                "absolute left-2 top-2 bg-blue-500 hover:bg-blue-600 text-white border-0",
+                "absolute left-2 top-2 border-0 bg-blue-500 text-white hover:bg-blue-600",
                 post.pinned ? "top-12" : "top-2"
               )}
             >
-              <MapPin className="w-3 h-3 mr-1" />
+              <MapPin className="mr-1 size-3" />
               坐标
             </Badge>
           )}
@@ -67,8 +67,8 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
         <div className="space-y-3">
           {/* 合集标签 */}
           {post.series && post.series.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <BookOpen className="w-4 h-4 text-primary shrink-0" />
+            <div className="flex flex-wrap items-center gap-2">
+              <BookOpen className="size-4 shrink-0 text-primary" />
               <div className="flex flex-wrap gap-1">
                 {post.series.map((seriesName, index) => (
                   <Badge key={index} variant="secondary" className="text-xs font-normal">
@@ -99,7 +99,7 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
           {/* 位置信息 */}
           {post.location && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="w-3 h-3" />
+              <MapPin className="size-3" />
               <span>{post.location[0].toFixed(2)}, {post.location[1].toFixed(2)}</span>
             </div>
           )}
@@ -189,12 +189,12 @@ function TagFilter({ tags, selectedTag, onTagSelect, maxVisible = 12 }: TagFilte
         >
           {showAll ? (
             <>
-              <ChevronUp className="mr-1 h-3 w-3" />
+              <ChevronUp className="mr-1 size-3" />
               收起标签
             </>
           ) : (
             <>
-              <ChevronDown className="mr-1 h-3 w-3" />
+              <ChevronDown className="mr-1 size-3" />
               显示更多 ({tags.length - maxVisible})
             </>
           )}
@@ -287,10 +287,10 @@ export default function JourneyArchivePage() {
   return (
     <div className="container py-6 lg:py-10">
       {/* 返回按钮和标题 */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="mb-8 flex items-center gap-4">
         <Button variant="ghost" size="sm">
           <Link href="/journey">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="mr-2 size-4" />
             返回在路上
           </Link>
         </Button>
@@ -311,21 +311,21 @@ export default function JourneyArchivePage() {
         {/* 搜索框 */}
         <div className="w-full md:w-auto">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="搜索标题、描述、标签或合集..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-10 md:w-80"
+              className="px-10 md:w-80"
             />
             {searchQuery && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
+                className="absolute right-1 top-1/2 size-6 -translate-y-1/2 p-0"
                 onClick={clearSearch}
               >
-                <X className="h-3 w-3" />
+                <X className="size-3" />
               </Button>
             )}
           </div>
@@ -337,7 +337,7 @@ export default function JourneyArchivePage() {
         {/* 合集筛选 */}
         {series.length > 1 && (
           <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
-            <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">合集</h3>
+            <h3 className="w-16 shrink-0 text-sm font-medium text-muted-foreground md:w-12">合集</h3>
             <div className="flex flex-wrap gap-2">
               {series.map((seriesName) => (
                 <Button
@@ -356,7 +356,7 @@ export default function JourneyArchivePage() {
 
         {/* 标签筛选 */}
         <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
-          <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">标签</h3>
+          <h3 className="w-16 shrink-0 text-sm font-medium text-muted-foreground md:w-12">标签</h3>
           <TagFilter
             tags={tagCounts}
             selectedTag={selectedTag}

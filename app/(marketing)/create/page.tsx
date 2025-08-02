@@ -59,64 +59,64 @@ export default async function CreatePage() {
   return (
     <div className="min-h-screen">
       {/* 产品展示 Section */}
-      <section id="products" className="py-12 lg:py-16 bg-gradient-to-b from-background to-accent/5">
+      <section id="products" className="bg-gradient-to-b from-background to-accent/5 py-12 lg:py-16">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
-          <div className="text-center space-y-6 mb-20">
+          <div className="mb-20 space-y-6 text-center">
             <Badge variant="outline" className="px-6 py-3 text-base">
-              <TrendingUp className="w-5 h-5 mr-2" />
+              <TrendingUp className="mr-2 size-5" />
               精品产品矩阵
             </Badge>
             
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight font-heading">
+            <h2 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               每一个产品都是用心打磨
             </h2>
             
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
               基于真实需求，解决实际问题，获得用户认可
             </p>
           </div>
 
           {/* 产品网格 */}
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 lg:grid-cols-3">
             {projects.map((project, index) => {
               const projectKey = project.slug.split('/').pop() as keyof typeof productFeatures
               const features = productFeatures[projectKey]
               
               return (
-                <Card key={project._id} className="group relative overflow-hidden border border-border/20 shadow-xl hover:shadow-2xl transition-all duration-700 bg-gradient-to-br from-card to-card/95 flex flex-col h-full">
+                <Card key={project._id} className="group relative flex h-full flex-col overflow-hidden border border-border/20 bg-gradient-to-br from-card to-card/95 shadow-xl transition-all duration-700 hover:shadow-2xl">
                   {/* 产品图片和标识区域 */}
-                  <div className="relative h-48 bg-gradient-to-br from-accent/10 to-accent/5 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-accent/10 to-accent/5">
                     <Image
                       src={project.image}
                       alt={project.title}
                       fill
-                      className="object-contain p-6 transition-all duration-700 group-hover:scale-110 group-hover:rotate-3"
+                      className="object-contain p-6 transition-all duration-700 group-hover:rotate-3 group-hover:scale-110"
                       sizes="(max-width: 1024px) 100vw, 33vw"
                     />
                     
                     {/* 热门标识 */}
-                    <div className="absolute top-4 left-4">
-                      <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    <div className="absolute left-4 top-4">
+                      <div className="rounded-full bg-gradient-to-r from-primary to-primary/80 px-3 py-1 text-xs font-bold text-primary-foreground shadow-lg">
                         {features?.badge}
                       </div>
                     </div>
                     
                     {/* 评分 */}
-                    <div className="absolute top-4 right-4">
-                      <div className="bg-black/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                        <Star className="w-4 h-4 text-primary fill-current" />
+                    <div className="absolute right-4 top-4">
+                      <div className="flex items-center gap-1 rounded-full bg-black/20 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+                        <Star className="size-4 fill-current text-primary" />
                         {features?.rating}
                       </div>
                     </div>
                   </div>
 
-                  <CardContent className="p-6 flex flex-col flex-1">
+                  <CardContent className="flex flex-1 flex-col p-6">
                     {/* 产品信息 */}
                     <div className="flex-1 space-y-4">
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                          <h3 className="text-xl font-bold group-hover:text-primary transition-colors font-heading">
+                          <h3 className="font-heading text-xl font-bold transition-colors group-hover:text-primary">
                             {project.title}
                           </h3>
                           <Badge variant="secondary" className="text-xs">
@@ -124,17 +124,17 @@ export default async function CreatePage() {
                           </Badge>
                         </div>
                         
-                        <p className="text-muted-foreground leading-normal line-clamp-3 text-sm">
+                        <p className="line-clamp-3 text-sm leading-normal text-muted-foreground">
                           {project.description}
                         </p>
                       </div>
 
                       {/* 产品特色 */}
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm text-foreground">核心特色</h4>
+                        <h4 className="text-sm font-semibold text-foreground">核心特色</h4>
                         <div className="flex flex-wrap gap-2">
                           {features?.highlights.map((highlight, i) => (
-                            <Badge key={i} variant="outline" className="text-xs bg-accent/10">
+                            <Badge key={i} variant="outline" className="bg-accent/10 text-xs">
                               {highlight}
                             </Badge>
                           ))}
@@ -142,7 +142,7 @@ export default async function CreatePage() {
                       </div>
 
                       {/* 用户数据 */}
-                      <div className="grid grid-cols-2 gap-4 py-2 border-t border-border/20">
+                      <div className="grid grid-cols-2 gap-4 border-t border-border/20 py-2">
                         <div className="text-center">
                           <div className="text-lg font-bold text-primary">{features?.users}</div>
                           <div className="text-xs text-muted-foreground">活跃用户</div>
@@ -155,19 +155,19 @@ export default async function CreatePage() {
                     </div>
 
                     {/* 操作按钮 */}
-                    <div className="flex gap-3 pt-4 mt-auto">
+                    <div className="mt-auto flex gap-3 pt-4">
                       <Link
                         href={project.slug.includes("weread-toolbox") || project.slug.includes("feishu-doc-helper") ? `/create/${project.slug.split('/').pop()}` : project.url}
                         target={project.slug.includes("weread-toolbox") || project.slug.includes("feishu-doc-helper") ? "_self" : "_blank"}
                         rel="noopener noreferrer"
                         className={cn(
                           buttonVariants({ size: "default" }),
-                          "flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                          "group flex-1 bg-gradient-to-r from-primary to-primary/80 shadow-lg transition-all duration-300 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl"
                         )}
                       >
-                        <Download className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                        <Download className="mr-2 size-4 transition-transform group-hover:scale-110" />
                         {project.slug.includes("weread-toolbox") || project.slug.includes("feishu-doc-helper") ? "查看详情" : "立即下载"}
-                        {!(project.slug.includes("weread-toolbox") || project.slug.includes("feishu-doc-helper")) && <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
+                        {!(project.slug.includes("weread-toolbox") || project.slug.includes("feishu-doc-helper")) && <ExternalLink className="ml-2 size-4 transition-transform group-hover:translate-x-1" />}
                       </Link>
                       
                       {project.docs && (
@@ -175,46 +175,46 @@ export default async function CreatePage() {
                           href={project.docs}
                           className={cn(
                             buttonVariants({ variant: "outline", size: "default" }),
-                            "px-4 border-2 hover:bg-accent/50 transition-all duration-300"
+                            "border-2 px-4 transition-all duration-300 hover:bg-accent/50"
                           )}
                         >
-                          <FileText className="w-4 h-4" />
+                          <FileText className="size-4" />
                         </Link>
                       )}
                     </div>
                   </CardContent>
 
                   {/* 悬浮效果装饰 */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
                 </Card>
               )
             })}
           </div>
 
           {/* 底部CTA */}
-          <div className="text-center mt-20">
+          <div className="mt-20 text-center">
             <div className="space-y-6">
               <p className="text-lg text-muted-foreground">
-                加入 <span className="text-primary font-bold">{stats.totalUsers}</span> 用户，体验效率革命
+                加入 <span className="font-bold text-primary">{stats.totalUsers}</span> 用户，体验效率革命
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link
                   href="/explore"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "lg" }),
-                    "h-12 px-8 border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
+                    "group h-12 border-2 px-8 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
                   )}
                 >
                   了解开发故事
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 
                 <Link
                   href="/about"
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "lg" }),
-                    "h-12 px-8 hover:bg-accent/50 transition-all duration-300"
+                    "h-12 px-8 transition-all duration-300 hover:bg-accent/50"
                   )}
                 >
                   关于开发者

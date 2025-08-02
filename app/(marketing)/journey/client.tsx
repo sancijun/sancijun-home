@@ -27,10 +27,10 @@ import { JourneyPhotoGallery, JourneyPhoto } from "@/components/journey-photo-ga
 // 确保地图组件只在客户端渲染
 const JourneyMap = dynamic(() => import("@/components/journey-map"), {
   loading: () => (
-    <div className="h-full w-full flex items-center justify-center bg-muted/50">
-      <div className="text-center space-y-4">
+    <div className="flex size-full items-center justify-center bg-muted/50">
+      <div className="space-y-4 text-center">
         <div className="animate-spin">
-          <Compass className="h-8 w-8 text-primary mx-auto" />
+          <Compass className="mx-auto size-8 text-primary" />
         </div>
         <p className="text-muted-foreground">探索地图加载中...</p>
       </div>
@@ -127,10 +127,10 @@ export default function JourneyClientPage() {
   // 确保地图组件只在客户端渲染
   const JourneyMap = dynamic(() => import("@/components/journey-map"), {
     loading: () => (
-      <div className="h-full w-full flex items-center justify-center bg-muted/50">
-        <div className="text-center space-y-4">
+      <div className="flex size-full items-center justify-center bg-muted/50">
+        <div className="space-y-4 text-center">
           <div className="animate-spin">
-            <Compass className="h-8 w-8 text-primary mx-auto" />
+            <Compass className="mx-auto size-8 text-primary" />
           </div>
           <p className="text-muted-foreground">探索地图加载中...</p>
         </div>
@@ -153,7 +153,7 @@ export default function JourneyClientPage() {
       <section className="relative h-screen w-full overflow-hidden">
          {/* 地图背景容器 - 90% 宽高靠近顶部 */}
          <div className="absolute inset-0 flex items-start justify-center pt-16">
-           <div className="w-[75%] h-[85%] relative">
+           <div className="relative h-[85%] w-[75%]">
              <JourneyMap
                posts={postsWithLocation}
                activePostId={activePostId}
@@ -161,12 +161,12 @@ export default function JourneyClientPage() {
              />
              
              {/* 标题和描述悬浮层 - 左上角 */}
-             <div className="absolute top-6 left-6 z-[1100] pointer-events-none">
-               <div className="space-y-4 pointer-events-auto max-w-md">
-                 <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-black drop-shadow-lg">
+             <div className="pointer-events-none absolute left-6 top-6 z-[1100]">
+               <div className="pointer-events-auto max-w-md space-y-4">
+                 <h1 className="font-heading text-4xl font-bold tracking-tight text-black drop-shadow-lg md:text-5xl">
                    在路上
                  </h1>
-                 <p className="text-lg md:text-xl text-black/80 leading-relaxed drop-shadow-lg">
+                 <p className="text-lg leading-relaxed text-black/80 drop-shadow-lg md:text-xl">
                    记录我的环国自驾旅行、数字游民生活，以及对世界的观察
                  </p>
                </div>
@@ -179,36 +179,36 @@ export default function JourneyClientPage() {
                    variant="secondary"
                    size="sm"
                    onClick={() => scrollToSection('latest-update')}
-                   className="bg-white/10 backdrop-blur-sm border-gray-300 text-black hover:bg-gray-100 justify-start"
+                   className="justify-start border-gray-300 bg-white/10 text-black backdrop-blur-sm hover:bg-gray-100"
                  >
-                   <Clock className="w-4 h-4 mr-2" />
+                   <Clock className="mr-2 size-4" />
                    最新动态
                  </Button>
                  <Button
                    variant="secondary"
                    size="sm"
                    onClick={() => scrollToSection('photo-gallery')}
-                   className="bg-white/10 backdrop-blur-sm border-gray-300 text-black hover:bg-gray-100 justify-start"
+                   className="justify-start border-gray-300 bg-white/10 text-black backdrop-blur-sm hover:bg-gray-100"
                  >
-                   <ImageIcon className="w-4 h-4 mr-2" />
+                   <ImageIcon className="mr-2 size-4" />
                    旅行相册
                  </Button>
                  <Button
                    variant="secondary"
                    size="sm"
                    onClick={() => scrollToSection('featured-stories')}
-                   className="bg-white/10 backdrop-blur-sm border-gray-300 text-black hover:bg-gray-100 justify-start"
+                   className="justify-start border-gray-300 bg-white/10 text-black backdrop-blur-sm hover:bg-gray-100"
                  >
-                   <Star className="w-4 h-4 mr-2" />
+                   <Star className="mr-2 size-4" />
                    精选故事
                  </Button>
                  <Link href="/journey/archive">
                    <Button
                      variant="secondary"
                      size="sm"
-                     className="bg-white/10 backdrop-blur-sm border-gray-300 text-black hover:bg-gray-100 justify-start w-full"
+                     className="w-full justify-start border-gray-300 bg-white/10 text-black backdrop-blur-sm hover:bg-gray-100"
                    >
-                     <Archive className="w-4 h-4 mr-2" />
+                     <Archive className="mr-2 size-4" />
                      全部日志
                    </Button>
                  </Link>
@@ -220,26 +220,26 @@ export default function JourneyClientPage() {
 
       {/* 最新动态模块 */}
       {latestPosts.length > 0 && (
-        <section id="latest-update" className="py-16 bg-background">
+        <section id="latest-update" className="bg-background py-16">
           <div className="flex justify-center">
             <div className="w-[75%]">
-              <div className="text-center space-y-4 mb-12">
+              <div className="mb-12 space-y-4 text-center">
                 <h2 className="font-heading text-3xl font-bold">最新动态</h2>
-                <p className="text-muted-foreground text-lg">最近的旅行足迹和思考</p>
+                <p className="text-lg text-muted-foreground">最近的旅行足迹和思考</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {latestPosts.map((post) => (
                   <FeaturedStoryCard key={post._id} post={post} />
                 ))}
               </div>
               
               {/* 查看更多按钮 */}
-              <div className="flex justify-center mt-10">
+              <div className="mt-10 flex justify-center">
                 <Link href="/journey/archive">
-                  <Button variant="outline" className="px-8 border-primary/30 hover:bg-primary/5 group">
+                  <Button variant="outline" className="group border-primary/30 px-8 hover:bg-primary/5">
                     查看更多旅行日志
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
               </div>
@@ -249,12 +249,12 @@ export default function JourneyClientPage() {
       )}
 
       {/* 照片墙/瀑布流 */}
-      <section id="photo-gallery" className="py-16 bg-background">
+      <section id="photo-gallery" className="bg-background py-16">
         <div className="flex justify-center">
           <div className="w-[75%]">
-            <div className="text-center space-y-4 mb-12">
+            <div className="mb-12 space-y-4 text-center">
               <h2 className="font-heading text-3xl font-bold">旅行相册</h2>
-              <p className="text-muted-foreground text-lg">记录路上的精彩瞬间</p>
+              <p className="text-lg text-muted-foreground">记录路上的精彩瞬间</p>
             </div>
             
             <JourneyPhotoGallery photos={allJourneyPhotos} />
@@ -264,12 +264,12 @@ export default function JourneyClientPage() {
 
       {/* 精选故事模块 */}
       {featuredPosts.length > 0 && (
-        <section id="featured-stories" className="py-16 bg-background">
+        <section id="featured-stories" className="bg-background py-16">
           <div className="flex justify-center">
             <div className="w-[75%]">
-              <div className="text-center space-y-4 mb-12">
+              <div className="mb-12 space-y-4 text-center">
                 <h2 className="font-heading text-3xl font-bold">精选故事</h2>
-                <p className="text-muted-foreground text-lg">那些值得回味的旅行时光</p>
+                <p className="text-lg text-muted-foreground">那些值得回味的旅行时光</p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -288,10 +288,10 @@ export default function JourneyClientPage() {
 // 最新动态卡片组件
 function LatestUpdateCard({ post }: { post: Post }) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg">
       <div className="md:flex">
         <div className="md:w-1/2">
-          <div className="aspect-[16/9] md:aspect-square relative overflow-hidden">
+          <div className="relative aspect-[16/9] overflow-hidden md:aspect-square">
             <Image
               src={post.image}
               alt={post.title}
@@ -300,21 +300,21 @@ function LatestUpdateCard({ post }: { post: Post }) {
             />
           </div>
         </div>
-        <div className="md:w-1/2 p-8 flex flex-col justify-center">
+        <div className="flex flex-col justify-center p-8 md:w-1/2">
           <div className="space-y-4">
             <Badge variant="secondary">{post.category}</Badge>
             <h3 className="font-heading text-2xl font-bold">{post.title}</h3>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-lg leading-relaxed text-muted-foreground">
               {post.description}
             </p>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="size-4" />
                 {formatDate(post.date)}
               </span>
               {post.location && (
                 <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="size-4" />
                   {post.location[0].toFixed(2)}, {post.location[1].toFixed(2)}
                 </span>
               )}
@@ -322,7 +322,7 @@ function LatestUpdateCard({ post }: { post: Post }) {
             <Link href={post.slug}>
               <Button className="w-fit">
                 阅读全文
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="ml-2 size-4" />
               </Button>
             </Link>
           </div>
@@ -335,8 +335,8 @@ function LatestUpdateCard({ post }: { post: Post }) {
 // 精选故事卡片组件
 function FeaturedStoryCard({ post }: { post: Post }) {
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
-      <div className="aspect-[16/9] relative overflow-hidden">
+    <Card className="group h-full overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <div className="relative aspect-[16/9] overflow-hidden">
         <Image
           src={post.image}
           alt={post.title}
@@ -344,27 +344,27 @@ function FeaturedStoryCard({ post }: { post: Post }) {
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {/* 悬浮标签 */}
-        <div className="absolute top-3 left-3">
-          <Badge variant="secondary" className="bg-white/80 backdrop-blur-sm text-black/80 font-medium">
+        <div className="absolute left-3 top-3">
+          <Badge variant="secondary" className="bg-white/80 font-medium text-black/80 backdrop-blur-sm">
             {post.category}
           </Badge>
         </div>
       </div>
-      <CardContent className="p-6 space-y-4">
-        <h3 className="font-heading text-xl font-semibold line-clamp-2">
+      <CardContent className="space-y-4 p-6">
+        <h3 className="line-clamp-2 font-heading text-xl font-semibold">
           {post.title}
         </h3>
-        <p className="text-muted-foreground line-clamp-3">
+        <p className="line-clamp-3 text-muted-foreground">
           {post.description}
         </p>
-        <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
+        <div className="flex items-center justify-between pt-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" />
+            <Calendar className="size-3.5" />
             {formatDate(post.date)}
           </span>
           {post.location && (
             <span className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5" />
+              <MapPin className="size-3.5" />
               坐标
             </span>
           )}

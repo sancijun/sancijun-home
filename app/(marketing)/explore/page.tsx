@@ -35,26 +35,26 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
           />
           
           {post.format === "video" && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors duration-200">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-200 group-hover:bg-black/30">
               {/* 外层光环效果 */}
-              <div className="absolute w-16 h-16 rounded-full bg-background/10 group-hover:animate-pulse"></div>
-              <div className="absolute w-12 h-12 rounded-full bg-background/20 group-hover:animate-ping"></div>
+              <div className="absolute size-16 rounded-full bg-background/10 group-hover:animate-pulse"></div>
+              <div className="absolute size-12 rounded-full bg-background/20 group-hover:animate-ping"></div>
               
               {/* 主播放按钮 - 小号 */}
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-primary shadow-xl backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-primary/50">
+              <div className="relative flex size-12 items-center justify-center rounded-full bg-primary shadow-xl backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-primary/50">
                 {/* 内层光效 */}
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-foreground/20 to-transparent"></div>
                 
                 {/* 播放图标 - 小号 */}
-                <Play className="ml-0.5 h-5 w-5 text-primary-foreground drop-shadow-lg" fill="currentColor" />
+                <Play className="ml-0.5 size-5 text-primary-foreground drop-shadow-lg" fill="currentColor" />
                 
                 {/* 按钮周围的脉冲效果 */}
                 <div className="absolute inset-0 rounded-full border-2 border-primary-foreground/30 group-hover:animate-pulse"></div>
               </div>
               
               {/* 底部播放文字提示 */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-background/80 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 border">
-                <span className="text-foreground text-xs font-medium">点击播放</span>
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border bg-background/80 px-3 py-1 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                <span className="text-xs font-medium text-foreground">点击播放</span>
               </div>
             </div>
           )}
@@ -64,9 +64,9 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
             <div className="absolute right-2 top-2">
               <Badge
                 variant="default"
-                className="bg-red-500 hover:bg-red-600 text-white border-0"
+                className="border-0 bg-red-500 text-white hover:bg-red-600"
               >
-                <Pin className="w-3 h-3 mr-1" />
+                <Pin className="mr-1 size-3" />
                 置顶
               </Badge>
             </div>
@@ -91,8 +91,8 @@ function PostCard({ post, onTagClick, selectedTag }: PostCardProps) {
         <div className="space-y-3">
           {/* 合集标签 */}
           {post.series && post.series.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <BookOpen className="w-4 h-4 text-primary shrink-0" />
+            <div className="flex flex-wrap items-center gap-2">
+              <BookOpen className="size-4 shrink-0 text-primary" />
               <div className="flex flex-wrap gap-1">
                 {post.series.map((seriesName, index) => (
                   <Badge key={index} variant="secondary" className="text-xs font-normal">
@@ -205,12 +205,12 @@ function TagFilter({ tags, selectedTag, onTagSelect, maxVisible = 12 }: TagFilte
         >
           {showAll ? (
             <>
-              <ChevronUp className="mr-1 h-3 w-3" />
+              <ChevronUp className="mr-1 size-3" />
               收起标签
             </>
           ) : (
             <>
-              <ChevronDown className="mr-1 h-3 w-3" />
+              <ChevronDown className="mr-1 size-3" />
               显示更多 ({tags.length - maxVisible})
             </>
           )}
@@ -323,21 +323,21 @@ export default function ExplorePage() {
         {/* 搜索框 - 移到标题右侧 */}
         <div className="w-full md:w-auto">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="搜索标题、描述、标签或合集..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-10 md:w-80"
+              className="px-10 md:w-80"
             />
             {searchQuery && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
+                className="absolute right-1 top-1/2 size-6 -translate-y-1/2 p-0"
                 onClick={clearSearch}
               >
-                <X className="h-3 w-3" />
+                <X className="size-3" />
               </Button>
             )}
           </div>
@@ -348,7 +348,7 @@ export default function ExplorePage() {
       <div className="my-8 space-y-6">
         {/* 分类筛选 */}
         <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
-          <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">分类</h3>
+          <h3 className="w-16 shrink-0 text-sm font-medium text-muted-foreground md:w-12">分类</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <Button
@@ -367,7 +367,7 @@ export default function ExplorePage() {
         {/* 合集筛选 */}
         {series.length > 1 && (
           <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
-            <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">合集</h3>
+            <h3 className="w-16 shrink-0 text-sm font-medium text-muted-foreground md:w-12">合集</h3>
             <div className="flex flex-wrap gap-2">
               {series.map((seriesName) => (
                 <Button
@@ -386,7 +386,7 @@ export default function ExplorePage() {
 
         {/* 标签筛选 */}
         <div className="flex flex-col gap-3 md:flex-row md:items-baseline">
-          <h3 className="w-16 text-sm font-medium shrink-0 text-muted-foreground md:w-12">标签</h3>
+          <h3 className="w-16 shrink-0 text-sm font-medium text-muted-foreground md:w-12">标签</h3>
           <TagFilter
             tags={tagCounts}
             selectedTag={selectedTag}

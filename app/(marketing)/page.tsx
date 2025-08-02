@@ -23,10 +23,10 @@ import { useState } from "react"
 // 动态导入地图组件
 const JourneyMap = dynamic(() => import("@/components/journey-map"), {
   loading: () => (
-    <div className="h-full w-full flex items-center justify-center bg-muted/50">
-      <div className="text-center space-y-4">
+    <div className="flex size-full items-center justify-center bg-muted/50">
+      <div className="space-y-4 text-center">
         <div className="animate-spin">
-          <div className="h-8 w-8 rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
+          <div className="mx-auto size-8 rounded-full border-4 border-primary border-t-transparent"></div>
         </div>
         <p className="text-muted-foreground">探索地图加载中...</p>
       </div>
@@ -90,15 +90,15 @@ export default function IndexPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto snap-y snap-mandatory">
+    <div className="h-[calc(100vh-80px)] snap-y snap-mandatory overflow-y-auto">
       {/* Hero Section */}
-      <section className="relative w-full overflow-hidden min-h-screen flex items-center justify-center snap-start">
+      <section className="relative flex min-h-screen w-full snap-start items-center justify-center overflow-hidden">
         <HeroBackground />
         <div className="container relative z-10 mx-auto max-w-5xl px-4">
-          <div className="text-center space-y-10">
+          <div className="space-y-10 text-center">
             <Badge
               variant="outline"
-              className="text-sm font-medium px-4 py-2 border-border/30 bg-background/50 backdrop-blur-sm animate-fadeIn"
+              className="animate-fadeIn border-border/30 bg-background/50 px-4 py-2 text-sm font-medium backdrop-blur-sm"
               style={{ animationDelay: "0ms" }}
             >
               在路上 · 进行时
@@ -108,19 +108,19 @@ export default function IndexPage() {
               className="animate-fadeIn"
               style={{ animationDelay: "200ms" }}
             >
-              <h1 className="font-heading text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight">
+              <h1 className="font-heading text-5xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
                 三此君
               </h1>
-              <p className="mt-6 text-lg sm:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground sm:text-2xl">
                 AI、代码与山河：一个独立开发者的环国实战。
               </p>
-              <p className="mt-4 text-base sm:text-lg text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed">
+              <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground/90 sm:text-lg">
                 此时、此地、此身，向着数字世界与真实大地，发起一场热烈的环国实战，在路上探索与创造。
               </p>
             </div>
 
             <div
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeIn"
+              className="animate-fadeIn flex flex-col items-center justify-center gap-4 sm:flex-row"
               style={{ animationDelay: "400ms" }}
             >
               <Link
@@ -133,7 +133,7 @@ export default function IndexPage() {
                 href="/create"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "h-12 px-8 text-base bg-background/50 backdrop-blur-sm"
+                  "h-12 bg-background/50 px-8 text-base backdrop-blur-sm"
                 )}
               >
                 查看我创造的作品
@@ -141,11 +141,11 @@ export default function IndexPage() {
             </div>
             
             <div
-              className="max-w-3xl mx-auto pt-10 animate-fadeIn"
+              className="animate-fadeIn mx-auto max-w-3xl pt-10"
               style={{ animationDelay: "600ms" }}
             >
-              <div className="p-4 bg-background/40 backdrop-blur-md rounded-2xl border border-border/30">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div className="rounded-2xl border border-border/30 bg-background/40 p-4 backdrop-blur-md">
+                <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
                   {[
                     { label: "原创文章", value: stats.articles, icon: FileText, href: "/explore" },
                     { label: "创造作品", value: stats.projects, icon: Rocket, href: "/create" },
@@ -158,12 +158,12 @@ export default function IndexPage() {
                       className="group transition-all duration-300 hover:scale-105"
                     >
                       <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300"></div>
-                        <p className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
+                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                        <p className="text-2xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-3xl">
                           {stat.value}
                         </p>
-                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5 group-hover:text-primary/80 transition-colors">
-                          <stat.icon className="w-3.5 h-3.5 opacity-70" />
+                        <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground transition-colors group-hover:text-primary/80">
+                          <stat.icon className="size-3.5 opacity-70" />
                           {stat.label}
                         </p>
                       </div>
@@ -177,33 +177,33 @@ export default function IndexPage() {
       </section>
 
       {/* Knowledge Graph Section */}
-      <section className="h-screen bg-gradient-to-b from-background to-accent/5 flex flex-col justify-center snap-start py-12 lg:py-16">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center h-full max-h-full">
-          <div className="text-center space-y-6 mb-8">
+      <section className="flex h-screen snap-start flex-col justify-center bg-gradient-to-b from-background to-accent/5 py-12 lg:py-16">
+        <div className="container mx-auto flex h-full max-h-full max-w-7xl flex-col items-center px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 space-y-6 text-center">
             <Badge variant="outline" className="px-4 py-2 text-sm">
-              <Cpu className="w-4 h-4 mr-2" />
+              <Cpu className="mr-2 size-4" />
               知识图谱
             </Badge>
             
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               探索·数字花园
             </h2>
             
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
               代码与山河交织，AI与思辨碰撞。每篇文章都是技术实践、在地体验与个人思考的融合
             </p>
           </div>
 
-          <div className="relative rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 to-accent/3 overflow-hidden shadow-xl w-full flex-1 min-h-0">
+          <div className="to-accent/3 relative min-h-0 w-full flex-1 overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 shadow-xl">
             {/* 图例 */}
-            <div className="absolute top-6 left-6 z-10 flex flex-wrap gap-3">
+            <div className="absolute left-6 top-6 z-10 flex flex-wrap gap-3">
               {[
                 { label: "AI洞察" },
                 { label: "产品构建" },
                 { label: "效率工具" },
                 { label: "环国自驾" },
               ].map((item, index) => (
-                <Badge key={index} variant="secondary" className="bg-card/90 backdrop-blur-sm border-border/20">
+                <Badge key={index} variant="secondary" className="border-border/20 bg-card/90 backdrop-blur-sm">
                   {item.label}
                 </Badge>
               ))}
@@ -211,11 +211,11 @@ export default function IndexPage() {
 
             {/* 最新文章卡片 */}
             {latestPosts.length > 0 && (
-              <div className="absolute top-6 right-6 z-10 w-72">
-                <Card className="bg-card/95 backdrop-blur-sm border-border/30 shadow-lg animate-fadeIn">
+              <div className="absolute right-6 top-6 z-10 w-72">
+                <Card className="animate-fadeIn border-border/30 bg-card/95 shadow-lg backdrop-blur-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2 font-medium text-muted-foreground">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                    <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <div className="size-2 animate-pulse rounded-full bg-primary" />
                       最新探索
                     </CardTitle>
                   </CardHeader>
@@ -225,7 +225,7 @@ export default function IndexPage() {
                         <Link
                           key={post.slug}
                           href={post.slug}
-                          className="block text-sm font-medium text-foreground/80 hover:text-primary transition-colors truncate"
+                          className="block truncate text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
                           title={post.title}
                         >
                           {post.title}
@@ -246,77 +246,77 @@ export default function IndexPage() {
       </section>
 
       {/* 精选创造 Section - 3个产品 */}
-      <section className="py-20 lg:py-32 min-h-screen flex flex-col items-center justify-center snap-start">
+      <section className="flex min-h-screen snap-start flex-col items-center justify-center py-20 lg:py-32">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-6 mb-16">
+          <div className="mb-16 space-y-6 text-center">
             <Badge variant="outline" className="px-4 py-2 text-sm">
-              <Star className="w-4 h-4 mr-2" />
+              <Star className="mr-2 size-4" />
               精选作品
             </Badge>
             
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               我创造的数字产品
             </h2>
             
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
               从0到1的创造，每个产品都是我的数字名片，旨在解决一个真实世界的问题。
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 lg:grid-cols-3">
             {projects.map((project, index) => (
-              <Card key={project._id} className="group relative overflow-hidden border border-border/20 shadow-lg hover:shadow-xl transition-all duration-500 bg-gradient-to-br from-card to-card/95 flex flex-col h-full">
+              <Card key={project._id} className="group relative flex h-full flex-col overflow-hidden border border-border/20 bg-gradient-to-br from-card to-card/95 shadow-lg transition-all duration-500 hover:shadow-xl">
                 {/* 产品图片区域 */}
-                <div className="relative h-48 bg-gradient-to-br from-accent/15 to-accent/5 overflow-hidden flex items-center justify-center">
-                  <div className="relative w-32 h-32 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                <div className="relative flex h-48 items-center justify-center overflow-hidden bg-gradient-to-br from-accent/15 to-accent/5">
+                  <div className="relative size-32 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
                     <Image
                       src={project.image}
                       alt={project.title}
                       fill
-                      className="object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all duration-500"
+                      className="object-contain drop-shadow-sm transition-all duration-500 group-hover:drop-shadow-md"
                     />
                   </div>
                   {/* 排名标识 */}
-                  <div className="absolute top-4 left-4">
-                    <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  <div className="absolute left-4 top-4">
+                    <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground shadow-sm">
                       #{index + 1}
                     </div>
                   </div>
                   {/* 热门标识 */}
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-primary/80 text-primary-foreground px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 shadow-sm">
-                      <TrendingUp className="w-3 h-3" />
+                  <div className="absolute right-4 top-4">
+                    <div className="flex items-center gap-1 rounded-full bg-primary/80 px-2 py-1 text-xs font-medium text-primary-foreground shadow-sm">
+                      <TrendingUp className="size-3" />
                       热门
                     </div>
                   </div>
                 </div>
 
-                <CardContent className="p-6 flex flex-col flex-1">
+                <CardContent className="flex flex-1 flex-col p-6">
                   <div className="flex-1 space-y-4">
                     <div className="space-y-3">
-                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                      <h3 className="text-xl font-bold transition-colors group-hover:text-primary">
                         {project.title}
                       </h3>
-                      <p className="text-muted-foreground leading-relaxed min-h-[3rem] line-clamp-3">
+                      <p className="line-clamp-3 min-h-12 leading-relaxed text-muted-foreground">
                         {project.description}
                       </p>
                     </div>
 
                     {/* 项目统计 */}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
+                    <div className="flex items-center gap-4 pt-2 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="size-4" />
                         {formatDate(project.date)}
                       </div>
                       <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
+                        <Users className="size-4" />
                         {index === 0 ? "5K+" : index === 1 ? "3K+" : "2K+"}用户
                       </div>
                     </div>
                   </div>
 
                   {/* 操作按钮 - 始终在底部 */}
-                  <div className="flex gap-3 pt-6 mt-auto">
+                  <div className="mt-auto flex gap-3 pt-6">
                     <Link
                       href={project.url}
                       target="_blank"
@@ -343,21 +343,21 @@ export default function IndexPage() {
                 </CardContent>
 
                 {/* 悬浮效果装饰 */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </Card>
             ))}
           </div>
 
-          <div className="text-center mt-16">
+          <div className="mt-16 text-center">
             <Link
               href="/create"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "h-12 px-8 border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
+                "group h-12 border-2 px-8 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
               )}
             >
               查看全部项目
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
@@ -365,29 +365,29 @@ export default function IndexPage() {
 
       {/* 在路上 Section - 交互式地图重设计 */}
       {journeyPost && (
-        <section className="py-20 lg:py-32 h-screen flex flex-col items-center justify-center snap-start">
-          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex flex-col">
+        <section className="flex h-screen snap-start flex-col items-center justify-center py-20 lg:py-32">
+          <div className="container mx-auto flex h-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
             {/* 标题区域 */}
-            <div className="text-center space-y-6 mb-8">
+            <div className="mb-8 space-y-6 text-center">
               <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
-                <Car className="w-4 h-4 mr-2" />
+                <Car className="mr-2 size-4" />
                 在路上 · 数字游民
               </Badge>
               
               <div className="space-y-4">
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+                <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                   代码之外的山河大地
                 </h2>
                 
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                   一场正在进行的环国自驾，是我的灵感来源，也是我的移动实验室。
                 </p>
               </div>
             </div>
 
             {/* 地图容器 - 占据剩余空间 */}
-            <div className="flex-1 relative">
-              <div className="w-full h-full relative rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 to-accent/3 overflow-hidden shadow-xl">
+            <div className="relative flex-1">
+              <div className="to-accent/3 relative size-full overflow-hidden rounded-3xl border border-border/30 bg-gradient-to-br from-card/40 shadow-xl">
                 <JourneyMap
                   posts={postsWithLocation}
                   activePostId={activePostId}
@@ -395,8 +395,8 @@ export default function IndexPage() {
                 />
                 
                 {/* 统计数据悬浮层 - 左上角 */}
-                <div className="absolute top-6 left-6 z-[1100] pointer-events-none">
-                  <div className="grid grid-cols-2 gap-3 max-w-sm pointer-events-auto">
+                <div className="pointer-events-none absolute left-6 top-6 z-[1100]">
+                  <div className="pointer-events-auto grid max-w-sm grid-cols-2 gap-3">
                     {[
                       { 
                         label: "足迹城市", 
@@ -424,11 +424,11 @@ export default function IndexPage() {
                       },
                     ].map((stat, index) => (
                       <div key={index} className="group relative">
-                        <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all duration-300 hover:shadow-lg">
+                        <Card className="border-white/20 bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white/20 hover:shadow-lg">
                           <CardContent className="p-4 text-center">
                             <div className="space-y-2">
-                              <div className="w-8 h-8 mx-auto rounded-lg bg-white/20 group-hover:bg-white/30 transition-colors duration-300 flex items-center justify-center">
-                                <stat.icon className="w-4 h-4 text-black group-hover:text-black transition-colors duration-300" />
+                              <div className="mx-auto flex size-8 items-center justify-center rounded-lg bg-white/20 transition-colors duration-300 group-hover:bg-white/30">
+                                <stat.icon className="size-4 text-black transition-colors duration-300 group-hover:text-black" />
                               </div>
                               <div className="space-y-1">
                                 <div className="text-2xl font-bold text-black drop-shadow-sm">
@@ -451,10 +451,10 @@ export default function IndexPage() {
                       href="/journey"
                       className={cn(
                         buttonVariants({ size: "sm" }),
-                        "bg-white/10 backdrop-blur-sm border-white/20 text-black hover:bg-white/20 hover:text-black group justify-start"
+                        "group justify-start border-white/20 bg-white/10 text-black backdrop-blur-sm hover:bg-white/20 hover:text-black"
                       )}
                     >
-                      <Globe className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                      <Globe className="mr-2 size-4 transition-transform group-hover:rotate-12" />
                       跟随我的足迹
                     </Link>
                     
@@ -462,10 +462,10 @@ export default function IndexPage() {
                       href={journeyPost.slug}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "bg-white/10 backdrop-blur-sm border-white/20 text-black hover:bg-white/20 hover:text-black justify-start"
+                        "justify-start border-white/20 bg-white/10 text-black backdrop-blur-sm hover:bg-white/20 hover:text-black"
                       )}
                     >
-                      <FileText className="w-4 h-4 mr-2" />
+                      <FileText className="mr-2 size-4" />
                       阅读最新故事
                     </Link>
                   </div>
@@ -477,20 +477,20 @@ export default function IndexPage() {
       )}
 
       {/* 订阅 Section - 全新设计 */}
-      <section className="py-20 lg:py-32 bg-accent/20 border-t border-border/20 min-h-screen flex items-center justify-center snap-start">
-        <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+      <section className="flex min-h-screen snap-start items-center justify-center border-t border-border/20 bg-accent/20 py-20 lg:py-32">
+        <div className="container mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <div className="space-y-6">
-            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
               加入我的旅程
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg leading-relaxed text-muted-foreground">
               订阅我的邮件列表，获取关于AI、独立开发和数字游民生活的最新思考和独家内容。不错过任何一次思想的碰撞。
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <div className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row">
               <input
                 type="email"
                 placeholder="输入你的邮箱..."
-                className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+                className="flex h-12 w-full flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
               <button
                 type="submit"

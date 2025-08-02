@@ -99,8 +99,8 @@ export default async function AboutPage() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative py-20 sm:py-24 lg:py-32">
-        <div className="container max-w-4xl mx-auto px-4">
-          <div className="text-center space-y-8">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="space-y-8 text-center">
             {/* 头像和基本信息 */}
             <div className="space-y-6">
           <Image
@@ -108,13 +108,13 @@ export default async function AboutPage() {
             alt="三此君头像"
                 width={96}
                 height={96}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto ring-4 ring-background shadow-lg"
+                className="mx-auto size-20 rounded-full shadow-lg ring-4 ring-background sm:size-24"
           />
           <div className="space-y-4">
-                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+                <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               三此君
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                   在不确定的世界里，寻找我的行动坐标
                 </p>
               </div>
@@ -130,9 +130,9 @@ export default async function AboutPage() {
               ].map((tag) => (
                 <div
                   key={tag.text}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 text-sm text-muted-foreground"
+                  className="inline-flex items-center gap-2 rounded-full bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground"
                 >
-                  <tag.icon className="h-3.5 w-3.5" />
+                  <tag.icon className="size-3.5" />
                   <span>{tag.text}</span>
                 </div>
               ))}
@@ -141,24 +141,24 @@ export default async function AboutPage() {
             {/* 社交联系 */}
             <div className="pt-4">
               <TooltipProvider>
-                <div className="flex justify-center flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   {socialLinks.map((social) => (
                     <div key={social.name}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <button className="p-3 rounded-full bg-muted/30 hover:bg-muted/60 transition-colors group">
-                            <social.icon className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                          <button className="group rounded-full bg-muted/30 p-3 transition-colors hover:bg-muted/60">
+                            <social.icon className="size-5 text-muted-foreground transition-colors group-hover:text-foreground" />
                             <span className="sr-only">{social.name}</span>
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-lg">
-                          <div className="bg-background p-3 rounded-lg shadow-lg border">
+                        <TooltipContent side="top" className="border-0 bg-transparent p-0 shadow-lg">
+                          <div className="rounded-lg border bg-background p-3 shadow-lg">
                             <img 
                               src={social.qrCode}
                               alt={`${social.name}二维码`}
-                              className="w-32 h-32 object-cover rounded"
+                              className="size-32 rounded object-cover"
                             />
-                            <p className="text-center text-xs mt-2 text-muted-foreground">扫码关注 {social.name}</p>
+                            <p className="mt-2 text-center text-xs text-muted-foreground">扫码关注 {social.name}</p>
                           </div>
                         </TooltipContent>
                       </Tooltip>
@@ -172,17 +172,17 @@ export default async function AboutPage() {
       </section>
 
       {/* 三此主义 - 独立区块 */}
-      <section className="py-16 sm:py-20 border-y bg-muted/20">
-        <div className="container max-w-5xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
+      <section className="border-y bg-muted/20 py-16 sm:py-20">
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 font-heading text-3xl font-bold sm:text-4xl">
               三此主义
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               我的行动哲学：此时、此地、此身
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid gap-8 md:grid-cols-3">
             {[
               {
                 icon: Cpu,
@@ -200,14 +200,14 @@ export default async function AboutPage() {
                 description: "从大厂螺丝钉到完整创造者，以我之身，负全部之责。",
               },
             ].map((item) => (
-              <div key={item.title} className="text-center p-6 rounded-lg bg-background/50">
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <item.icon className="w-6 h-6 text-primary" />
+              <div key={item.title} className="rounded-lg bg-background/50 p-6 text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10">
+                    <item.icon className="size-6 text-primary" />
                   </div>
                 </div>
-                <h3 className="font-semibold text-lg mb-3">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
+                <h3 className="mb-3 text-lg font-semibold">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
               </div>
             ))}
           </div>
@@ -215,24 +215,24 @@ export default async function AboutPage() {
       </section>
 
       {/* Dual Life Section */}
-      <section className="py-20 sm:py-24 bg-accent/20 border-y">
-        <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold">
+      <section className="border-y bg-accent/20 py-20 sm:py-24">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="mb-16 text-center">
+            <h2 className="font-heading text-3xl font-bold sm:text-4xl">
               双重人生
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
               技术世界的建造者 vs 真实大地的探索者
             </p>
           </div>
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="grid items-start gap-12 lg:grid-cols-2">
             {/* Technologist */}
-            <div className="flex flex-col h-full">
-              <div className="flex items-center gap-4 mb-8">
-                <Code className="h-8 w-8 text-primary" />
+            <div className="flex h-full flex-col">
+              <div className="mb-8 flex items-center gap-4">
+                <Code className="size-8 text-primary" />
                 <h3 className="font-heading text-2xl font-semibold">技术世界的建造者</h3>
               </div>
-              <div className="space-y-4 text-muted-foreground mb-8">
+              <div className="mb-8 space-y-4 text-muted-foreground">
                 <p>
                   我是一名拥有超过6年经验的后端工程师，曾在OPPO和Shopee等一线大厂主导项目，从快应用后端到数字银行AI系统，我的职业生涯围绕着构建大规模、高可用的系统。
                 </p>
@@ -240,13 +240,13 @@ export default async function AboutPage() {
                   但工具的价值在于使用。我将大厂的经验内化，转身投入到更轻盈、更自由的独立开发中。我相信，好的产品是解决真实世界问题的优雅方案。
                 </p>
               </div>
-              <div className="flex-1 flex flex-col">
-                <h4 className="font-semibold mb-4">我的作品集:</h4>
-                <div className="flex-1 grid gap-4 content-start">
+              <div className="flex flex-1 flex-col">
+                <h4 className="mb-4 font-semibold">我的作品集:</h4>
+                <div className="grid flex-1 content-start gap-4">
                   {projects.map((p) => (
                     <div
                       key={p.name}
-                      className="p-4 bg-background border rounded-lg hover:shadow-md transition-shadow"
+                      className="rounded-lg border bg-background p-4 transition-shadow hover:shadow-md"
                     >
                       <p className="font-semibold">{p.name}</p>
                       <p className="text-sm text-muted-foreground">
@@ -259,12 +259,12 @@ export default async function AboutPage() {
             </div>
 
             {/* Explorer */}
-            <div className="flex flex-col h-full">
-              <div className="flex items-center gap-4 mb-8">
-                <Anchor className="h-8 w-8 text-primary" />
+            <div className="flex h-full flex-col">
+              <div className="mb-8 flex items-center gap-4">
+                <Anchor className="size-8 text-primary" />
                 <h3 className="font-heading text-2xl font-semibold">真实大地的探索者</h3>
               </div>
-              <div className="space-y-4 text-muted-foreground mb-8">
+              <div className="mb-8 space-y-4 text-muted-foreground">
                 <p>
                   大厂之外，我选择成为一名数字游民，启动了我的环国自驾之旅。方向盘和键盘，是我探索世界的两个工具。
                 </p>
@@ -272,8 +272,8 @@ export default async function AboutPage() {
                   这场旅行不是逃避，而是主动的探索。我希望在行走中观察、思考，将不同地域的文化、风景和人情，融入我的思考和创作，让代码拥有更广阔的视野和更温暖的质感。
                 </p>
               </div>
-              <div className="flex-1 flex flex-col">
-                <h4 className="font-semibold mb-4">环国自驾路线:</h4>
+              <div className="flex flex-1 flex-col">
+                <h4 className="mb-4 font-semibold">环国自驾路线:</h4>
                 <div className="flex-1">
                   <JourneyMapSection posts={postsWithLocation} />
                 </div>
@@ -285,19 +285,19 @@ export default async function AboutPage() {
 
       {/* Current Focus */}
       <section className="py-20 sm:py-24">
-        <div className="container max-w-4xl mx-auto px-4">
-          <div className="text-center space-y-8">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="space-y-8 text-center">
             <div>
-            <Bot className="h-10 w-10 text-primary mx-auto mb-4" />
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold">
+            <Bot className="mx-auto mb-4 size-10 text-primary" />
+            <h2 className="font-heading text-3xl font-bold sm:text-4xl">
                 AI 创业进行时
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
               AI创业项目：我正与伙伴们一起打造 Superkid，让每一个小孩都能长成超能宝贝！
             </p>
           </div>
             
-            <div className="bg-muted/30 rounded-xl p-8 max-w-3xl mx-auto">
+            <div className="mx-auto max-w-3xl rounded-xl bg-muted/30 p-8">
               <div className="space-y-4">
                 <h3 className="font-heading text-2xl font-bold text-primary">
                   Superkid
@@ -318,7 +318,7 @@ export default async function AboutPage() {
                   "rounded-full"
                 )}
               >
-                    <Icons.xiaohongshu className="h-5 w-5 mr-2" />
+                    <Icons.xiaohongshu className="mr-2 size-5" />
                     访问 Superkid 小红书
                   </Link>
                 </div>

@@ -47,10 +47,10 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
   
   return (
     <div className="container max-w-5xl py-6 lg:py-10">
-      <Card className="overflow-hidden border rounded-xl shadow-sm">
+      <Card className="overflow-hidden rounded-xl border shadow-sm">
         <div className="flex flex-col lg:flex-row">
           {/* 左侧图片区域 */}
-          <div className="lg:w-1/2 bg-blue-100/10 flex items-center justify-center p-4 lg:p-6">
+          <div className="flex items-center justify-center bg-blue-100/10 p-4 lg:w-1/2 lg:p-6">
             <Carousel 
               className="w-full" 
               setApi={setApi}
@@ -58,7 +58,7 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
               <CarouselContent>
                 {post.images?.map((imageUrl, index) => (
                   <CarouselItem key={index} className="flex items-center justify-center">
-                    <div className="relative w-full flex items-center justify-center">
+                    <div className="relative flex w-full items-center justify-center">
                       <Image
                         src={imageUrl}
                         alt={`${post.title} - Slide ${index + 1}`}
@@ -75,12 +75,12 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2 h-8 w-8 opacity-70 hover:opacity-100 transition-opacity" />
-              <CarouselNext className="right-2 h-8 w-8 opacity-70 hover:opacity-100 transition-opacity" />
+              <CarouselPrevious className="left-2 size-8 opacity-70 transition-opacity hover:opacity-100" />
+              <CarouselNext className="right-2 size-8 opacity-70 transition-opacity hover:opacity-100" />
               
               {/* 图片计数指示器 */}
               {post.images && post.images.length > 1 && (
-                <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                <div className="absolute bottom-3 right-3 rounded-full bg-black/50 px-2 py-1 text-xs text-white">
                   {currentIndex + 1}/{post.images.length}
                 </div>
               )}
@@ -88,9 +88,9 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
           </div>
           
           {/* 右侧内容区域 - 可滚动 */}
-          <div className="lg:w-1/2 p-6 lg:p-8 max-h-[800px] overflow-y-auto">
+          <div className="max-h-[800px] overflow-y-auto p-6 lg:w-1/2 lg:p-8">
             {/* 标题和日期 */}
-            <div className="space-y-3 mb-4">
+            <div className="mb-4 space-y-3">
               <h1 className="font-heading text-2xl font-bold leading-tight lg:text-3xl">
                 {post.title}
               </h1>
@@ -107,25 +107,25 @@ export function SlidesPostPage({ post }: SlidesPostPageProps) {
             {/* 分类标签 */}
             {post.category && (
               <div className="mb-4">
-                <Badge variant="outline" className="text-xs px-2 py-0.5">
+                <Badge variant="outline" className="px-2 py-0.5 text-xs">
                   {post.category}
                 </Badge>
               </div>
             )}
             
             {/* 正文内容 */}
-            <div className="prose prose-sm prose-stone dark:prose-invert max-w-none">
+            <div className="prose prose-sm prose-stone max-w-none dark:prose-invert">
               <Mdx code={post.body.code} />
             </div>
             
             {/* 标签 */}
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6">
+              <div className="mt-6 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="cursor-pointer rounded-full px-3 py-1 text-xs font-medium bg-muted/80"
+                    className="cursor-pointer rounded-full bg-muted/80 px-3 py-1 text-xs font-medium"
                   >
                     #{tag}
                   </Badge>

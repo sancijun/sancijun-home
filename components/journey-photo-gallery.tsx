@@ -94,14 +94,14 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
   return (
     <div className={cn("w-full", className)}>
       {/* 统一大小的网格，每行最多9张图片 */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-1 md:gap-2">
+      <div className="grid grid-cols-3 gap-1 sm:grid-cols-4 md:grid-cols-6 md:gap-2 lg:grid-cols-9">
         {photos.map((photo, index) => {
           const { paddingBottom } = getPhotoStyle(index);
           
           return (
             <div 
               key={photo.id}
-              className="cursor-pointer overflow-hidden rounded-md border bg-card hover:shadow-lg transition-all duration-300"
+              className="cursor-pointer overflow-hidden rounded-md border bg-card transition-all duration-300 hover:shadow-lg"
               onClick={() => setSelectedPhoto(photo)}
             >
               {/* 使用 padding-bottom 技巧保持宽高比 */}
@@ -114,8 +114,8 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
                   sizes="(max-width: 640px) 33vw, (max-width: 768px) 16vw, (max-width: 1024px) 12vw, 11vw"
                   priority={index < 9}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
-                  <div className="text-white text-xs font-medium w-full">
+                <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent/20 p-2 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                  <div className="w-full text-xs font-medium text-white">
                     <p className="line-clamp-1 text-[10px]">{photo.alt}</p>
                   </div>
                 </div>
@@ -128,9 +128,9 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
       {/* Lightbox dialog */}
       {selectedPhoto && (
         <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
-          <DialogContent className="max-w-screen-lg w-[95vw] h-[90vh] p-0">
-            <div className="relative w-full h-full flex items-center justify-center bg-black/95">
-              <div className="relative w-full h-full flex items-center justify-center">
+          <DialogContent className="h-[90vh] w-[95vw] max-w-screen-lg p-0">
+            <div className="relative flex size-full items-center justify-center bg-black/95">
+              <div className="relative flex size-full items-center justify-center">
                 <Image
                   src={selectedPhoto.src}
                   alt={selectedPhoto.alt}
@@ -143,9 +143,9 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
               </div>
               
               {/* Close button */}
-              <DialogClose className="absolute right-4 top-4 text-white z-50">
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm">
-                  <X className="h-5 w-5" />
+              <DialogClose className="absolute right-4 top-4 z-50 text-white">
+                <Button variant="ghost" size="icon" className="size-10 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70">
+                  <X className="size-5" />
                 </Button>
               </DialogClose>
               
@@ -153,43 +153,43 @@ export function JourneyPhotoGallery({ photos, className }: JourneyPhotoGalleryPr
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm"
+                className="absolute left-4 top-1/2 size-12 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60"
                 onClick={handlePrevious}
               >
-                <ChevronLeft className="h-7 w-7 text-white" />
+                <ChevronLeft className="size-7 text-white" />
               </Button>
               
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm"
+                className="absolute right-4 top-1/2 size-12 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60"
                 onClick={handleNext}
               >
-                <ChevronRight className="h-7 w-7 text-white" />
+                <ChevronRight className="size-7 text-white" />
               </Button>
               
               {/* Caption */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/70 to-transparent">
-                <p className="text-white text-xl font-medium max-w-3xl mx-auto">{selectedPhoto.alt}</p>
-                <div className="flex items-center justify-between mt-2 max-w-3xl mx-auto">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/70 to-transparent p-6">
+                <p className="mx-auto max-w-3xl text-xl font-medium text-white">{selectedPhoto.alt}</p>
+                <div className="mx-auto mt-2 flex max-w-3xl items-center justify-between">
                   <div className="flex items-center gap-2">
                     {selectedPhoto.location && (
-                      <span className="flex items-center gap-1 text-white/80 text-sm">
-                        <MapPin className="h-4 w-4" />
+                      <span className="flex items-center gap-1 text-sm text-white/80">
+                        <MapPin className="size-4" />
                         {selectedPhoto.location}
                       </span>
                     )}
                   </div>
                   {selectedPhoto.date && (
-                    <span className="flex items-center gap-1 text-white/80 text-sm">
-                      <Calendar className="h-4 w-4" />
+                    <span className="flex items-center gap-1 text-sm text-white/80">
+                      <Calendar className="size-4" />
                       {selectedPhoto.date}
                     </span>
                   )}
                 </div>
                 
                 {/* 照片计数器 */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm text-white/70">
                   {photoIndex + 1} / {photos.length}
                 </div>
               </div>

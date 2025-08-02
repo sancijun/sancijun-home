@@ -125,23 +125,23 @@ export default function MapComponents({ posts, activePostId, onPostHover }: MapC
   const shouldShowPopups = currentZoom > 5
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative size-full">
       {/* 简化的控制器 */}
-      <Card className="absolute top-4 right-4 z-[1000] p-3 border border-border/20 bg-background/95 backdrop-blur-sm shadow-lg">
+      <Card className="absolute right-4 top-4 z-[1000] border border-border/20 bg-background/95 p-3 shadow-lg backdrop-blur-sm">
         <div className="flex items-center space-x-3">
           <Switch
             id="planned-route"
             checked={showPlannedRoute}
             onCheckedChange={setShowPlannedRoute}
           />
-          <label htmlFor="planned-route" className="text-sm font-medium cursor-pointer">
+          <label htmlFor="planned-route" className="cursor-pointer text-sm font-medium">
             显示计划路线
           </label>
         </div>
       </Card>
 
       {/* 动态图例 - 根据缩放级别调整 */}
-      <Card className="absolute bottom-4 left-4 z-[1000] p-3 border border-border/20 bg-background/95 backdrop-blur-sm shadow-lg">
+      <Card className="absolute bottom-4 left-4 z-[1000] border border-border/20 bg-background/95 p-3 shadow-lg backdrop-blur-sm">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium">图例</h4>
@@ -151,23 +151,23 @@ export default function MapComponents({ posts, activePostId, onPostHover }: MapC
             {shouldShowMarkers && (
               <>
                 <div className="flex items-center space-x-2">
-                  <div className={`${currentZoom <= 4 ? 'w-2 h-2' : 'w-4 h-4'} rounded-full bg-gradient-to-r from-green-500 to-green-600 border-2 border-white shadow-sm`}></div>
+                  <div className={`${currentZoom <= 4 ? 'size-2' : 'size-4'} rounded-full border-2 border-white bg-gradient-to-r from-green-500 to-green-600 shadow-sm`}></div>
                   <span className="text-xs">已访问</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className={`${currentZoom <= 4 ? 'w-2 h-2' : 'w-4 h-4'} rounded-full bg-gradient-to-r from-blue-500 to-blue-600 border-2 border-white shadow-sm`}></div>
+                  <div className={`${currentZoom <= 4 ? 'size-2' : 'size-4'} rounded-full border-2 border-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm`}></div>
                   <span className="text-xs">计划中</span>
                 </div>
               </>
             )}
             {showPlannedRoute && (
               <div className="flex items-center space-x-2">
-                <div className="w-4 h-0.5 bg-primary opacity-70" style={{ borderTop: '2px dashed' }}></div>
+                <div className="h-0.5 w-4 bg-primary opacity-70" style={{ borderTop: '2px dashed' }}></div>
                 <span className="text-xs">路线</span>
               </div>
             )}
             {!shouldShowMarkers && (
-              <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+              <div className="rounded bg-muted/50 p-2 text-xs text-muted-foreground">
                 放大查看标记点
               </div>
             )}
@@ -180,7 +180,7 @@ export default function MapComponents({ posts, activePostId, onPostHover }: MapC
         center={defaultPosition}
         zoom={5}
         scrollWheelZoom={true}
-        className="h-full w-full rounded-none md:rounded-2xl"
+        className="size-full rounded-none md:rounded-2xl"
         zoomControl={false}
       >
         {/* 地图事件监听 */}
@@ -224,7 +224,7 @@ export default function MapComponents({ posts, activePostId, onPostHover }: MapC
                     <div className="space-y-2 p-1">
                       <Link
                         href={post.slug}
-                        className="font-semibold hover:underline text-primary flex items-center gap-2"
+                        className="flex items-center gap-2 font-semibold text-primary hover:underline"
                       >
                         {post.title}
                       </Link>

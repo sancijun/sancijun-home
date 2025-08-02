@@ -136,7 +136,7 @@ const HeroBackground = () => {
       ref={ref as React.RefObject<HTMLDivElement>}
       className="absolute inset-0 -z-10"
     >
-      <canvas ref={canvasRef} className="h-full w-full" />
+      <canvas ref={canvasRef} className="size-full" />
        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
        <div 
         className="absolute inset-0 opacity-[0.03]" 

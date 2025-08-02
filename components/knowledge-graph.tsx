@@ -256,19 +256,19 @@ const KnowledgeGraph = ({ graphData, className, latestPostId }: KnowledgeGraphPr
 
   return (
     <TooltipProvider>
-      <div className={cn("w-full h-full bg-background overflow-hidden relative", className)}>
-        <svg ref={svgRef} className="w-full h-full cursor-grab active:cursor-grabbing"></svg>
+      <div className={cn("relative size-full overflow-hidden bg-background", className)}>
+        <svg ref={svgRef} className="size-full cursor-grab active:cursor-grabbing"></svg>
         <div className="absolute bottom-6 left-6 z-10">
           <Link
             href="/explore"
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "bg-background/60 backdrop-blur-sm border-border/30 hover:bg-accent/80 transition-all group animate-fadeIn"
+              "animate-fadeIn group border-border/30 bg-background/60 backdrop-blur-sm transition-all hover:bg-accent/80"
             )}
             style={{ animationDelay: "800ms" }}
           >
             浏览全部内容
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
         <div className="absolute bottom-6 right-6 z-10">
@@ -278,12 +278,12 @@ const KnowledgeGraph = ({ graphData, className, latestPostId }: KnowledgeGraphPr
                 onClick={handleCenterView}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon" }),
-                  "bg-background/60 backdrop-blur-sm border-border/30 hover:bg-accent/80 transition-all animate-fadeIn"
+                  "animate-fadeIn border-border/30 bg-background/60 backdrop-blur-sm transition-all hover:bg-accent/80"
                 )}
                 style={{ animationDelay: "900ms" }}
                 aria-label="Center graph"
               >
-                <Focus className="h-4 w-4" />
+                <Focus className="size-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent>

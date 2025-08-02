@@ -50,7 +50,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
       <div className="container flex flex-col items-center justify-between gap-6 py-10 md:h-24 md:flex-row md:py-0">
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-6 md:px-0">
           <Icons.logo />
-          <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6 md:items-center">
+          <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-6">
             <p className="text-center text-sm leading-loose md:text-left">
               由{" "}
               <span className="font-medium">三此君</span>
@@ -62,19 +62,19 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
                   <div key={social.name}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
-                          <social.icon className="h-4 w-4" />
+                        <button className="p-1 text-muted-foreground transition-colors hover:text-foreground">
+                          <social.icon className="size-4" />
                           <span className="sr-only">{social.name}</span>
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="p-0 border-0 bg-transparent shadow-lg">
-                        <div className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg border">
+                      <TooltipContent side="top" className="border-0 bg-transparent p-0 shadow-lg">
+                        <div className="rounded-lg border bg-white p-2 shadow-lg dark:bg-gray-800">
                           <img 
                             src={social.qrCode} 
                             alt={`${social.name}二维码`}
-                            className="w-32 h-32 object-cover rounded"
+                            className="size-32 rounded object-cover"
                           />
-                          <p className="text-center text-xs mt-2 text-gray-600 dark:text-gray-300">{social.name}</p>
+                          <p className="mt-2 text-center text-xs text-gray-600 dark:text-gray-300">{social.name}</p>
                         </div>
                       </TooltipContent>
                     </Tooltip>

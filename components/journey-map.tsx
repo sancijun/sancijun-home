@@ -22,10 +22,10 @@ interface JourneyMapProps {
 const MapWithNoSSR = dynamic(() => import('./map-components'), {
   ssr: false,
   loading: () => (
-    <div className="h-full w-full flex items-center justify-center bg-muted/50">
-      <div className="text-center space-y-4">
+    <div className="flex size-full items-center justify-center bg-muted/50">
+      <div className="space-y-4 text-center">
         <div className="animate-spin">
-          <div className="h-8 w-8 rounded-full border-4 border-primary border-t-transparent"></div>
+          <div className="size-8 rounded-full border-4 border-primary border-t-transparent"></div>
         </div>
         <p className="text-muted-foreground">地图加载中...</p>
                       </div>

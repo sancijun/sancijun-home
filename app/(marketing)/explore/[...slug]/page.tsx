@@ -78,7 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
           "absolute left-[-200px] top-14 hidden xl:inline-flex"
         )}
       >
-        <Icons.chevronLeft className="mr-2 h-4 w-4" />
+        <Icons.chevronLeft className="mr-2 size-4" />
         查看所有文章
       </Link>
       <div>
@@ -94,7 +94,7 @@ export default async function PostPage({ params }: PostPageProps) {
           {post.title}
         </h1>
         {post.category && (
-          <p className="mt-2 text-md text-muted-foreground">{post.category}</p>
+          <p className="text-md mt-2 text-muted-foreground">{post.category}</p>
         )}
       </div>
 
@@ -116,7 +116,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 priority
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                <Icons.playCircle className="h-20 w-20 text-white/80" />
+                <Icons.playCircle className="size-20 text-white/80" />
               </div>
             </div>
           </Link>
@@ -127,7 +127,7 @@ export default async function PostPage({ params }: PostPageProps) {
               rel="noopener noreferrer"
               className={cn(buttonVariants({ size: "lg" }))}
             >
-              <Icons.play className="mr-2 h-5 w-5" />
+              <Icons.play className="mr-2 size-5" />
               在源平台观看
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default async function PostPage({ params }: PostPageProps) {
           />
         )
       )}
-      <div className="prose prose-stone dark:prose-invert mx-auto mt-8 w-full">
+      <div className="prose prose-stone mx-auto mt-8 w-full dark:prose-invert">
         <Mdx code={post.body.code} />
       </div>
       <hr className="mt-12" />
